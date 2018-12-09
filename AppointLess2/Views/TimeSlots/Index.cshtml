@@ -1,0 +1,55 @@
+﻿@*@model Tuple<AppointLess2.Schedule, IEnumerable<AppointLess2.TimeSlot>>*@
+@model IEnumerable<AppointLess2.TimeSlot>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>TimeSlots</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DaysOfWeek)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TimeOfDay)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LengthMinutes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Schedule.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DaysOfWeek)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeOfDay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LengthMinutes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Schedule.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "TimeSlots", new { id = item.Id }, null) |
+                @Html.ActionLink("Details", "Details", "TimeSlots", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "TimeSlots", new { id = item.Id }, null)
+            </td>
+        </tr>
+    }
+    @Html.Partial("../TimeSlots/Create", new AppointLess2.TimeSlot())
+    @*@Html.Partial("~/Views/TimeSlots/Create", Model)*@
+
+</table>

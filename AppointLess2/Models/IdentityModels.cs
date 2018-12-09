@@ -29,5 +29,7 @@ namespace AppointLess2.Models
         {
             return new ApplicationDbContext();
         }
+
+        //public System.Data.Entity.DbSet<AppointLess2.Models.ScheduleViewModels.TimeSlotInput> TimeSlotInputs { get; set; }
     }
 }

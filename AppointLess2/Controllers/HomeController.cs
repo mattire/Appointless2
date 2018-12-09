@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppointLess2.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +9,19 @@ namespace AppointLess2.Controllers
 {
     public class HomeController : Controller
     {
+        private Entities db = new Entities();
+
+
         public ActionResult Index()
         {
-            return View();
+            IQueryable<Schedule> scheds = null;
+
+            if (User.Identity != null) {
+                System.Diagnostics.Debug.WriteLine("Auth");
+                scheds = DbUtils.GetUserSchedules(db, User);
+            }
+
+            return View(scheds);
         }
 
         public ActionResult About()
@@ -25,6 +36,15 @@ namespace AppointLess2.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
