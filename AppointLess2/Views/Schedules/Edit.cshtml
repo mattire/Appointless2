@@ -43,7 +43,7 @@
     @*<button class="accordion">Vastaanottoajan syöttö</button>
         <div>*@
     <h3>Syötä uusi vastaanottoaika</h3>
-    @Html.Partial("TimeSlotInput", new AppointLess2.Models.ScheduleViewModels.TimeSlotInput())
+    @Html.Partial("TimeSlotInput", new AppointLess2.ViewModels.ScheduleViewModels.TimeSlotInput())
     @*</div>*@
 
     @Html.ActionLink("Edit schedule timeslots", "Index", "TimeSlots", new { id = Model.Id }, null) |

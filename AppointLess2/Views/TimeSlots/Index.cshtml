@@ -16,6 +16,7 @@
 <table class="table">
     <tr>
         <th>
+            
             @Html.DisplayNameFor(model => model.DaysOfWeek)
         </th>
         <th>
@@ -34,6 +35,7 @@
     {
         <tr>
             <td>
+                @*@Html.CheckBoxListFor(model => item.DaysOfWeek, null, new { @class = "form-horizontal", @style = "margin-left:40px;" })*@
                 @Html.DisplayFor(modelItem => item.DaysOfWeek)
             </td>
             <td>
