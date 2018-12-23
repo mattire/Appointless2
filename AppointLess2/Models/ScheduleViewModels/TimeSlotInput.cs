@@ -12,25 +12,9 @@ namespace AppointLess2.Models.ScheduleViewModels
         //AppointLess2.TimeSlot
         public int Id { get; set; }
 
-
+        [Display(Name = "Viikonpäivät")]
         public SelectList DaysOfWeek { get; set; }
 
-        //[Display(Name = "Weekdays")]
-        //public IEnumerable<string> DaysOfWeek { get; set; } = new List<string> { "Ma", "Ti", "Ke", "To", "Pe", "La", "Su" };
-        //[Display(Name = "Ma")]
-        //public bool Monday { get; set; }
-        //[Display(Name = "Ti")]
-        //public bool Tuesday { get; set; }
-        //[Display(Name = "Ke")]
-        //public bool Wensday { get; set; }
-        //[Display(Name = "To")]
-        //public bool Thursday { get; set; }
-        //[Display(Name = "Pe")]
-        //public bool Friday { get; set; }
-        //[Display(Name = "La")]
-        //public bool Saturday { get; set; }
-        //[Display(Name = "Su")]
-        //public bool Sunday { get; set; }
         [Required]
         [Display(Name = "Aloitus aika")]
         public System.TimeSpan TimeOfDay { get; set; }

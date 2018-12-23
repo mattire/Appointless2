@@ -1,10 +1,14 @@
 ﻿@model AppointLess2.Schedule
 
+
+
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+
+<h2>Vastaanottoaikataulun muokkaus</h2>
 
 
 @using (Html.BeginForm())
@@ -12,7 +16,7 @@
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
-    <h4>Schedule</h4>
+    @*<h4>Schedule</h4>*@
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
@@ -25,7 +29,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="display:none">
         @Html.LabelFor(model => model.UserID, "UserID", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.DropDownList("UserID", null, htmlAttributes: new { @class = "form-control" })
@@ -33,8 +37,15 @@
         </div>
     </div>
 
-    @Html.Partial("TimeSlotInput", new AppointLess2.Models.ScheduleViewModels.TimeSlotInput())
+    <h3>Vastaanottoajat</h3>
     @Html.Partial("../TimeSlots/Index", Model.TimeSlots)
+
+    @*<button class="accordion">Vastaanottoajan syöttö</button>
+        <div>*@
+    <h3>Syötä uusi vastaanottoaika</h3>
+    @Html.Partial("TimeSlotInput", new AppointLess2.Models.ScheduleViewModels.TimeSlotInput())
+    @*</div>*@
+
     @Html.ActionLink("Edit schedule timeslots", "Index", "TimeSlots", new { id = Model.Id }, null) |
 
     <div class="form-group">
@@ -48,6 +59,26 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script>
+
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+
+
+</script>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

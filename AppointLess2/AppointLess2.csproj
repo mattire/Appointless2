@@ -230,6 +230,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ScheduleViewModels\ScheduleVM.cs" />
     <Compile Include="Models\ScheduleViewModels\TimeSlotInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schedule.cs">
@@ -328,6 +329,9 @@
     <Content Include="Views\TimeSlots\Details.cshtml" />
     <Content Include="Views\TimeSlots\Edit.cshtml" />
     <Content Include="Views\TimeSlots\Index.cshtml" />
+    <Content Include="Views\ScheduleBuilder\TimeSlot.cshtml" />
+    <Content Include="Views\ScheduleBuilder\TimeSlotList.cshtml" />
+    <Content Include="Views\ScheduleBuilder\Schedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

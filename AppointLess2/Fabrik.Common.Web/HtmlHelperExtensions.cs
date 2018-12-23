@@ -150,7 +150,7 @@ namespace Fabrik.Common.Web
                     cb.MergeAttribute("checked", "checked");
 
                 label.InnerHtml = cb.ToString(TagRenderMode.SelfClosing) + item.Text;
-
+                //container.AddCssClass("form-horizontal");
                 container.InnerHtml += label.ToString();
             }
 

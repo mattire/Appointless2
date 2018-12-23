@@ -30,6 +30,10 @@ namespace AppointLess2.Models
             return new ApplicationDbContext();
         }
 
+        public System.Data.Entity.DbSet<AppointLess2.Models.ScheduleViewModels.ScheduleVM> ScheduleVMs { get; set; }
+
+        public System.Data.Entity.DbSet<AppointLess2.Models.ScheduleViewModels.TimeSlotVM> TimeSlotVMs { get; set; }
+
         //public System.Data.Entity.DbSet<AppointLess2.Models.ScheduleViewModels.TimeSlotInput> TimeSlotInputs { get; set; }
     }
 }
