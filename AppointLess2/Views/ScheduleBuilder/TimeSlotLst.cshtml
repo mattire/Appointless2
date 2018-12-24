@@ -1,0 +1,58 @@
+﻿@model Tuple<int, IEnumerable<AppointLess2.ViewModels.ScheduleViewModels.TimeSlotVM>>
+
+
+<h3>Ajat</h3>
+<p>
+    @Html.ActionLink("Create New", "CreateTS", new { ScheduleID = Model.Item1 }) )
+    @*@Html.ActionLink("Create New", "CreateTS" )*@
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            DaysOfWeek
+            @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("DaysOfWeek"))*@
+            @*@Html.DisplayNameFor(Model => Model.Item2.DaysOfWeek)*@
+        </th>
+        <th>
+            TimeOfDay
+            @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("TimeOfDay"))*@
+        </th>
+        <th>
+            LengthMinutes
+            @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("LengthMinutes"))*@
+        </th>
+        <th>
+            ScheduleID
+            @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("ScheduleID"))*@
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.Item2)
+{
+    <tr>
+            
+        <td>
+            @string.Join(",", item.DaysOfWeek.Where(d=>d.Selected).Select(d => d.Text))
+            @*@item.DaysOfWeek.Select(d => d.Text)
+            @Html.DisplayFor(modelItem => item.DaysOfWeek)*@
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TimeOfDay)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LengthMinutes)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScheduleID)
+        </td>
+        <td>
+            @Html.ActionLink("Edit"   , "EditTS"   , new { id=item.Id }) |
+            @Html.ActionLink("Details", "DetailsTS", new { id=item.Id }) |
+            @Html.ActionLink("Delete" , "DeleteTS" , new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
