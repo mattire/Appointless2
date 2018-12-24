@@ -42,6 +42,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="128" />
           <Property Name="UserID" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="StartOfDay" Type="time" Precision="7" />
+          <Property Name="EndOfDay" Type="time" Precision="7" />
         </EntityType>
         <EntityType Name="TimeSlot">
           <Key>
@@ -171,6 +173,8 @@
           <NavigationProperty Name="AspNetUser" Relationship="Model.FK__Schedule__UserID__5DCAEF64" FromRole="Schedule" ToRole="AspNetUser" />
           <NavigationProperty Name="Bookings" Relationship="Model.FK__Booking__Schedul__6383C8BA" FromRole="Schedule" ToRole="Booking" />
           <NavigationProperty Name="TimeSlots" Relationship="Model.FK__TimeSlot__Schedu__60A75C0F" FromRole="Schedule" ToRole="TimeSlot" />
+          <Property Name="StartOfDay" Type="Time" Precision="7" />
+          <Property Name="EndOfDay" Type="Time" Precision="7" />
         </EntityType>
         <EntityType Name="TimeSlot">
           <Key>
@@ -260,6 +264,8 @@
           <EntitySetMapping Name="Schedules">
             <EntityTypeMapping TypeName="Model.Schedule">
               <MappingFragment StoreEntitySet="Schedule">
+                <ScalarProperty Name="EndOfDay" ColumnName="EndOfDay" />
+                <ScalarProperty Name="StartOfDay" ColumnName="StartOfDay" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

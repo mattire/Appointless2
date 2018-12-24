@@ -24,6 +24,8 @@ namespace AppointLess2
         public int Id { get; set; }
         public string Name { get; set; }
         public string UserID { get; set; }
+        public Nullable<System.TimeSpan> StartOfDay { get; set; }
+        public Nullable<System.TimeSpan> EndOfDay { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

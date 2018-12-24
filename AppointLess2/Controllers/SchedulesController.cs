@@ -98,7 +98,9 @@ namespace AppointLess2.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.UserID = new SelectList(db.AspNetUsers, "Id", "Email", schedule.UserID);
+            
+            //ViewBag.UserID = new SelectList(db.AspNetUsers, "Id", "Email", schedule.UserID);
+            //ViewBag.UserID = new SelectList(db.Schedules, "Id,Name,UserID", schedule.UserID);
             return View(schedule);
         }
 

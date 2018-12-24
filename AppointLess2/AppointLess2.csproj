@@ -206,6 +206,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
+    <Compile Include="Controllers\ScheduleBuilderController.cs" />
     <Compile Include="Controllers\TimeSlotsController.cs" />
     <Compile Include="DBModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -329,9 +330,14 @@
     <Content Include="Views\TimeSlots\Details.cshtml" />
     <Content Include="Views\TimeSlots\Edit.cshtml" />
     <Content Include="Views\TimeSlots\Index.cshtml" />
+    <Content Include="Views\ScheduleBuilder\Builder.cshtml" />
+    <Content Include="Views\ScheduleBuilder\TimeSlotLst.cshtml" />
+    <Content Include="Views\ScheduleBuilder\CreateTimeSlot.cshtml" />
+    <Content Include="Views\ScheduleBuilder\EditTimeSlot.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\SheduleBuilder\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

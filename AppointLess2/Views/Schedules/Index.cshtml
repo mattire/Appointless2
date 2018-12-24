@@ -31,11 +31,13 @@
 @*<td>
         @Html.DisplayFor(modelItem => item.AspNetUser.Email)
     </td>*@
-    <td>
-        @Html.ActionLink("Edit", "Edit", "Schedules", new { id = item.Id }, null) |
-        @Html.ActionLink("Details", "Details", "Schedules", new { id = item.Id }, null) |
-        @Html.ActionLink("Delete", "Delete", "Schedules", new { id = item.Id }, null)
-    </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "Schedules", new { id = item.Id }, null) |
+                @Html.ActionLink("Details", "Details", "Schedules", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "Schedules", new { id = item.Id }, null) |
+                @Html.ActionLink("Build", "Edit", "ScheduleBuilder", new { id = item.Id }, null) |
+                @Html.ActionLink("Build2", "Edit", "SheduleBuilder", new { id = item.Id }, null)
+            </td>
     </tr>
     }
 
