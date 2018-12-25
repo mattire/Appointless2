@@ -3,29 +3,32 @@
 
 <h3>Ajat</h3>
 <p>
-    @Html.ActionLink("Create New", "CreateTS", new { ScheduleID = Model.Item1 }) )
+    @Html.ActionLink("Create New", "CreateTS", new { ScheduleID = Model.Item1 }) 
     @*@Html.ActionLink("Create New", "CreateTS" )*@
 </p>
 
 <table class="table">
     <tr>
         <th>
-            DaysOfWeek
+            Viikonpäivät
+            @*DaysOfWeek*@
             @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("DaysOfWeek"))*@
             @*@Html.DisplayNameFor(Model => Model.Item2.DaysOfWeek)*@
         </th>
         <th>
-            TimeOfDay
+            Aika
+            @*TimeOfDay*@
             @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("TimeOfDay"))*@
         </th>
         <th>
-            LengthMinutes
+            Kesto (minuuttia)
+            @*LengthMinutes*@
             @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("LengthMinutes"))*@
         </th>
-        <th>
+        @*<th>
             ScheduleID
-            @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("ScheduleID"))*@
-        </th>
+        </th>*@
+        @*@Html.DisplayNameFor(model => model.Item2.GetType().GetProperty("ScheduleID"))*@
         <th></th>
     </tr>
 
@@ -44,9 +47,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.LengthMinutes)
         </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.ScheduleID)
-        </td>
+        </td>*@
         <td>
             @Html.ActionLink("Edit"   , "EditTS"   , new { id=item.Id }) |
             @Html.ActionLink("Details", "DetailsTS", new { id=item.Id }) |

@@ -32,19 +32,33 @@ namespace AppointLess2.Controllers
         {
             if (ModelState.IsValid)
             {
-                var schedID = int.Parse(Request.Form["ScheduleID"]);
-                var tsID = int.Parse(Request.Form["Id"]);
+                //var schedID = int.Parse(Request.Form["ScheduleID"]);
+                //var tsID = int.Parse(Request.Form["Id"]);
+                ////var tsTimeOfDay = int.Parse(Request.Form["TimeOfDay"]);
+                //TimeSlot slot = vm.ToTS(Request);
+                //slot.ScheduleID = schedID;
+                //slot.Id = tsID;
+
+                ResetIdsFromReq(vm, Request);
                 TimeSlot slot = vm.ToTS(Request);
-                slot.ScheduleID = schedID;
-                slot.Id = tsID;
+
                 db.Entry(slot).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Edit", new { Id = schedID });
-
+                //return RedirectToAction("Edit", new { Id = schedID });
+                return RedirectToAction("Edit", new { Id = vm.ScheduleID });
             }
-            
+            ResetIdsFromReq(vm, Request);
             //var tsVM = new TimeSlotVM(ts);
             return View("EditTimeSlot", vm);
+        }
+
+        private void ResetIdsFromReq(TimeSlotVM vm, HttpRequestBase req)
+        {
+            var schedID = int.Parse(Request.Form["ScheduleID"]);
+            var tsID = int.Parse(Request.Form["Id"]);
+            vm.Id = tsID;
+            vm.ScheduleID = schedID;
+            vm.SetDaysFromReq(req);
         }
 
 

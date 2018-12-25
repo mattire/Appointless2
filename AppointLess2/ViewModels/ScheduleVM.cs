@@ -53,6 +53,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
         [Required]
         [Display(Name = "Aloitus aika")]
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm}", ApplyFormatInEditMode = true)]
         public System.TimeSpan TimeOfDay { get; set; }
         [Required]
         [Display(Name = "Pituus minuutteina")]
@@ -101,12 +102,25 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
                 ScheduleID      = ScheduleID,
             };
 
-            var str = string.Join("", this.DaysOfWeek.Select(d => d.Selected ? "1" : "0"));
-            ts.DaysOfWeek = (byte)Convert.ToInt32(str, 2);
+            //var str = string.Join("", this.DaysOfWeek.Select(d => d.Selected ? "1" : "0"));
+            //ts.DaysOfWeek = (byte)Convert.ToInt32(str, 2);
 
             var binStrLst = new List<string>() { "Su", "La", "Pe", "To", "Ke", "Ti", "Ma" }.Select(s => req.Form.AllKeys.Contains(s) ? "1" : "0");
-            ts.DaysOfWeek = (byte)Convert.ToInt32(string.Join("", binStrLst));
+            var binStr = string.Join("", binStrLst);
+            ts.DaysOfWeek = (byte)Convert.ToInt32(binStr, 2);
             return ts;
+        }
+
+        internal void SetDaysFromReq(HttpRequestBase req) {
+            var mon = new SelectListItem() { Selected = req.Form.AllKeys.Contains("Ma"), Text = "Ma", Value = "Ma" };
+            var tue = new SelectListItem() { Selected = req.Form.AllKeys.Contains("Ti"), Text = "Ti", Value = "Ti" };
+            var wed = new SelectListItem() { Selected = req.Form.AllKeys.Contains("Ke"), Text = "Ke", Value = "Ke" };
+            var thu = new SelectListItem() { Selected = req.Form.AllKeys.Contains("To"), Text = "To", Value = "To" };
+            var fri = new SelectListItem() { Selected = req.Form.AllKeys.Contains("Pe"), Text = "Pe", Value = "Pe" };
+            var sat = new SelectListItem() { Selected = req.Form.AllKeys.Contains("La"), Text = "La", Value = "La" };
+            var sun = new SelectListItem() { Selected = req.Form.AllKeys.Contains("Su"), Text = "Su", Value = "Su" };
+
+            DaysOfWeek = new List<SelectListItem>(new[] { mon, tue, wed, thu, fri, sat, sun, });
         }
     }
 }
