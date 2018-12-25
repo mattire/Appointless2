@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -17,6 +18,32 @@ namespace AppointLess2.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+
+        public ActionResult DeleteTS(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TimeSlot ts = db.TimeSlots.Find(id);
+            if (ts == null)
+            {
+                return HttpNotFound();
+            }
+            return View(ts);
+        }
+
+        [HttpPost, ActionName("DeleteTS")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteTS(int id, FormCollection collection)
+        {
+            TimeSlot timeSlot = db.TimeSlots.Find(id);
+            var schedId = timeSlot.ScheduleID;
+            db.TimeSlots.Remove(timeSlot);
+            db.SaveChanges();
+            return RedirectToAction("Edit", new { Id = schedId });
         }
 
         public ActionResult EditTS(int id)
@@ -64,7 +91,8 @@ namespace AppointLess2.Controllers
 
         public ActionResult CreateTS(int scheduleID)
         {
-            var tsVM = new TimeSlotVM(new TimeSlot());
+            var sch = db.Schedules.FirstOrDefault(s => s.Id == scheduleID);
+            var tsVM = new TimeSlotVM(new TimeSlot(), sch);
             tsVM.ScheduleID = scheduleID;
             return View("CreateTimeSlot", tsVM);
         }
@@ -84,7 +112,8 @@ namespace AppointLess2.Controllers
                 ts.ScheduleID = schedID;
                 db.TimeSlots.Add(ts);
                 db.SaveChanges();
-                return RedirectToAction("Edit", schedID);
+                return RedirectToAction("Edit", new { id = schedID });
+                //return View("Edit", new { id = schedID });
             }
 
             //ViewBag.UserID = new SelectList(db.AspNetUsers, "Id", "Email", timeSlotVM.UserID);
@@ -147,7 +176,6 @@ namespace AppointLess2.Controllers
             try
             {
                 // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch

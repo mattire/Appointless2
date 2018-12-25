@@ -72,7 +72,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
                 new[] { "Ma", "Ti", "Ke", "To", "Pe", "La", "Su" });
         }
 
-        public TimeSlotVM(TimeSlot ts)
+        public TimeSlotVM(TimeSlot ts, Schedule sch = null)
         {
             //this.ts = ts;
             this.Id             = ts.Id;
@@ -81,8 +81,15 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
             this.ScheduleID     = ts.ScheduleID    ;
             int daysInt = ts.DaysOfWeek;
 
-            SchedStart = ts.Schedule.StartOfDay;
-            SchedEnd = ts.Schedule.EndOfDay;
+            if (sch != null)
+            {
+                SchedStart = sch.StartOfDay;
+                SchedEnd   = sch.EndOfDay;
+            }
+            else {
+                SchedStart = ts.Schedule.StartOfDay;
+                SchedEnd = ts.Schedule.EndOfDay;
+            }
 
             var mon = new SelectListItem() { Selected = (daysInt & 1)  != 0, Text = "Ma", Value = "Ma" };
             var tue = new SelectListItem() { Selected = (daysInt & 2)  != 0, Text = "Ti", Value = "Ti" };
