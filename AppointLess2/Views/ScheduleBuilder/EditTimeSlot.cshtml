@@ -6,6 +6,8 @@
 
 <h2>TimeSlotEdit</h2>
 
+<span id="schedStart"   style="display:none">@Model.SchedStart</span>
+<span id="schedEnd"     style="display:none">@Model.SchedEnd</span>
 
 @using (Html.BeginForm())
 {
@@ -17,6 +19,7 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ScheduleID)
+
     <input type="hidden" id="CheckboxValues" name="CheckboxValues" value="xxx">
 
     <div class="form-group">
@@ -31,11 +34,11 @@
                 {
                     if (day.Selected)
                     {
-                        <input name="@day.Text" id="@day.Text" type="checkbox" checked="checked" value="@day.Text" data-val="true"> @day.Text;
+                        <input name="@day.Text" id="@day.Text" type="checkbox" checked="checked" value="@day.Text" data-val="true" oninput="inputChanged()"> @day.Text;
                     }
                     else
                     {
-                        <input name="@day.Text" id="@day.Text" type="checkbox" value="@day.Text" data-val="true"> @day.Text;
+                        <input name="@day.Text" id="@day.Text" type="checkbox" value="@day.Text" data-val="true" oninput="inputChanged()"> @day.Text;
                     }
                 }
             }
@@ -107,7 +110,7 @@
                 var startX = i * 50;
 
                 var lenX = 50;
-                var startY = hour * 10;
+                var startY = hour;
                 var lenY = mins / 6;
                 ctx.fillRect(startX, startY, 50, lenY);
             }
@@ -125,6 +128,24 @@
             ctx.lineTo(i * 50, 240);
             ctx.stroke();
         }
+
+        var startElem = document.getElementById("schedStart");
+        var endElem   = document.getElementById("schedEnd");
+        
+        if (startElem != undefined && endElem != undefined) {
+            var dayStart = parseInt(startElem.textContent) * 10;
+            var dayEnd = parseInt(endElem.textContent) * 10;
+
+            ctx.beginPath();
+            ctx.moveTo(0, dayStart );
+            ctx.lineTo(350, dayStart);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, dayEnd);
+            ctx.lineTo(350, dayEnd);
+            ctx.stroke();
+        }
     }
 
     function ReadWeekDays() {
@@ -135,28 +156,68 @@
         var Pe  = document.getElementById("Pe");
         var La  = document.getElementById("La");
         var Su = document.getElementById("Su");
-        return [Ma, Ti, Ke, To, Pe, La, Su];
+        
+        return [
+            Ma.checked == true ? 1 : 0,
+            Ti.checked == true ? 1 : 0,
+            Ke.checked == true ? 1 : 0,
+            To.checked == true ? 1 : 0,
+            Pe.checked == true ? 1 : 0,
+            La.checked == true ? 1 : 0,
+            Su.checked == true ? 1 : 0,
+        ];
+    }
+
+    function clearCanvas() {
+        var c = document.getElementById("schedMiniMap");
+        var ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, c.width, c.height);
     }
 
     function ReadTimeAndLength() {
         var tod = document.getElementById("TimeOfDay");
         var lm = document.getElementById("LengthMinutes");
-        return [tod, lm];
+        
+        return {
+            tod: tod.value,
+            lm: lm.value,
+        };
     }
 
     $('document').ready(function () {
         try {
-            var color = "#FF0000";
-            var array1 = [1, 1, 0, 0, 1, 0, 0];
-            WriteToCanvas(8, 60, array1, color);
-            array1 = [1, 1, 1, 1, 1, 0, 0];
-            color = "#0000FF";
-            WriteToCanvas(10, 60, array1, color);
-            Lines();
+            //var color = "#FF0000";
+            //var array1 = [1, 1, 0, 0, 1, 0, 0];
+            //WriteToCanvas(80, 60, array1, color);
+            //array1 = [1, 1, 1, 1, 1, 0, 0];
+            //color = "#0000FF";
+            //WriteToCanvas(100, 60, array1, color);
+            //Lines();
+            inputChanged();
         } catch (ex) {
             alert(ex);
         }
     });
+
+    function inputChanged() {
+        console.log("changed");
+        clearCanvas();
+        var { tod, lm } = ReadTimeAndLength();
+        console.log(tod);
+
+        var days = ReadWeekDays();
+        var h = parseInt(tod.split(":")[0]);
+        var m = parseInt(tod.split(":")[1]);
+        var mins = parseInt(lm);
+        var y = Math.round((h + m / 60) * 10);
+        WriteToCanvas(y, mins, days, "#FF000088");
+        //WriteToCanvas(y, mins, days, rgba(10, 10, 10, 1));
+        
+        Lines();
+    }
+
+    $('#TimeOfDay')     .change(function () { inputChanged(); });
+    $('#LengthMinutes') .change(function () { inputChanged(); });
 
 </script>
 

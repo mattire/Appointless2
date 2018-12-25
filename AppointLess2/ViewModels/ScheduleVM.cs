@@ -18,8 +18,8 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
             Name            = sched.Name;
             UserID          = sched.UserID;
             DailyStartTime  = sched.StartOfDay;
-            DailyEndTime = sched.EndOfDay;
-            TimeSlotVMs = sched.TimeSlots.Select(ts=> new TimeSlotVM(ts));
+            DailyEndTime    = sched.EndOfDay;
+            TimeSlotVMs     = sched.TimeSlots.Select(ts=> new TimeSlotVM(ts));
         }
 
         [System.Web.Mvc.HiddenInput(DisplayValue = false)]
@@ -31,10 +31,12 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
         [System.Web.Mvc.HiddenInput(DisplayValue = false)]
         public string UserID { get; set; }
 
-        [Display(Name = "Päivän alku")]
-        public TimeSpan? DailyStartTime { get; set; }
-        [Display(Name = "Päivän loppu")]
-        public TimeSpan? DailyEndTime { get; set; }
+        [Range(0, 24)]
+        [Display(Name = "Päivän alku (tunti)")]
+        public int? DailyStartTime { get; set; }
+        [Range(0, 24)]
+        [Display(Name = "Päivän loppu (tunti)")]
+        public int? DailyEndTime { get; set; }
 
         [Display(Name = "Ajat")]
         public IEnumerable<TimeSlotVM> TimeSlotVMs { get; set; }
@@ -42,7 +44,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
     public class TimeSlotVM
     {
-        private TimeSlot ts;
+        //private TimeSlot ts;
 
         public long Id { get; set; }
 
@@ -60,6 +62,9 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
         public int LengthMinutes { get; set; }
 
         public int ScheduleID { get; set; }
+        public int? SchedStart { get; private set; }
+        public int? SchedEnd { get; private set; }
+
         //public virtual Schedule Schedule { get; set; }
         public TimeSlotVM()
         {
@@ -69,12 +74,16 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
         public TimeSlotVM(TimeSlot ts)
         {
-            this.ts = ts;
+            //this.ts = ts;
             this.Id             = ts.Id;
             this.TimeOfDay      = ts.TimeOfDay     ;
             this.LengthMinutes  = ts.LengthMinutes ;
             this.ScheduleID     = ts.ScheduleID    ;
             int daysInt = ts.DaysOfWeek;
+
+            SchedStart = ts.Schedule.StartOfDay;
+            SchedEnd = ts.Schedule.EndOfDay;
+
             var mon = new SelectListItem() { Selected = (daysInt & 1)  != 0, Text = "Ma", Value = "Ma" };
             var tue = new SelectListItem() { Selected = (daysInt & 2)  != 0, Text = "Ti", Value = "Ti" };
             var wed = new SelectListItem() { Selected = (daysInt & 4)  != 0, Text = "Ke", Value = "Ke" };

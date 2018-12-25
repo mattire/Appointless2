@@ -116,14 +116,21 @@ namespace AppointLess2.Controllers
             {
                 var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
                 var name = collection["Name"];
+                var start   = int.Parse(collection["DailyStartTime"]);
+                var end     = int.Parse(collection["DailyEndTime"]);
                 sched.Name = name;
+                if (start < end) {
+                    sched.StartOfDay = start;
+                    sched.EndOfDay   = end;
+                }
                 db.Entry(sched).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Edit", new { id = id });
             }
             catch
             {
-                return View();
+                //return View();
+                return RedirectToAction("Edit", new { id = id });
             }
         }
 

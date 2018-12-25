@@ -30,8 +30,6 @@ namespace AppointLess2
         public virtual DbSet<Schedule> Schedules { get; set; }
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
 
-        //public System.Data.Entity.DbSet<AppointLess2.ViewModels.ScheduleViewModels.TimeSlotVM> TimeSlotVMs { get; set; }
-        //public System.Data.Entity.DbSet<AppointLess2.ViewModels.ScheduleViewModels.TimeSlotVM> TimeSlotVMs { get; set; }
-
+        //public System.Data.Entity.DbSet<AppointLess2.ViewModels.ScheduleViewModels.ScheduleVM> ScheduleVMs { get; set; }
     }
 }

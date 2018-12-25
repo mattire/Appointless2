@@ -334,6 +334,7 @@
     <Content Include="Views\ScheduleBuilder\TimeSlotLst.cshtml" />
     <Content Include="Views\ScheduleBuilder\CreateTimeSlot.cshtml" />
     <Content Include="Views\ScheduleBuilder\EditTimeSlot.cshtml" />
+    <Content Include="Views\Schedules\TestSched.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
