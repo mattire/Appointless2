@@ -77,7 +77,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.LengthMinutes, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.LengthMinutes, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.LengthMinutes, new { htmlAttributes = new { @class = "form-control", @min = "0", @step = "15" } })
             @Html.ValidationMessageFor(model => model.LengthMinutes, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -226,26 +226,49 @@
 
     function binaryDowToBoolList(bVal) {
         return [
-            (bVal & 1) != 0,
-            (bVal & 2) != 0,
-            (bVal & 4) != 0,
-            (bVal & 8) != 0,
+            (bVal & 1)  != 0,
+            (bVal & 2)  != 0,
+            (bVal & 4)  != 0,
+            (bVal & 8)  != 0,
             (bVal & 16) != 0,
             (bVal & 32) != 0,
             (bVal & 64) != 0,
         ];
     }
 
+    var roundChange = false;
+
+    function roundInputs(h, m, mins) {
+        console.log("ÄÄÄ");
+        var lenMins = Math.round(mins / 15) * 15;
+        var startMins = Math.round(m / 15) * 15;
+        var newSTart = h + ":" + startMins;
+        console.log(newSTart);
+        roundChange = true;
+        //$('#TimeOfDay').value = h + ":" + startMins;
+        //$('#LengthMinutes').value = lenMins;
+        var tod = document.getElementById("TimeOfDay");
+        var lm = document.getElementById("LengthMinutes");
+        tod.value = newSTart;
+        lm.value = lenMins;
+        roundChange = false;
+    }
+
     function inputChanged() {
         console.log("changed");
+        if (roundChange) { return; }
         clearCanvas();
         var { tod, lm } = ReadTimeAndLength();
         console.log(tod);
 
         var days = ReadWeekDays();
         var h = parseInt(tod.split(":")[0]);
+
         var m = parseInt(tod.split(":")[1]);
         var mins = parseInt(lm);
+
+        roundInputs(h, m, mins);
+
         var y = Math.round((h + m / 60) * 10);
         WriteToCanvas(y, mins, days, "#FF000088");
 

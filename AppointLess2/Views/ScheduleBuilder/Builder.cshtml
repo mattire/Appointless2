@@ -150,14 +150,53 @@
         return nums.filter(function (v) { return v != -1 });
     }
 
+    function ToSlotTds(se, cellCount)
+    {
+        var num = se.split("-")[0].substr(2);
+        var hm = se.split("-")[1].split(":");
+        var dec = parseInt(hm[0]) + parseInt(hm[1]) / 60;
+        //var slotDecs = [];
+        var arr = new Array(cellCount).fill("");
+        arr[0] = se;
+        for (var i=1; i < cellCount; i++) {
+            var newDecVal = dec + i / 4;
+            var remainder = newDecVal % 1;
+            var newHours = newDecVal - remainder;
+            var newMins = (remainder * 100 / 25) * 15; 
+            var strMin = (newMins + "").length == 1 ? "0" + newMins : "" + newMins;
+            arr[i] = "td" + num + "-" + newHours + ":" + strMin;
+        }
+        return arr;
+    }
+
     function WriteTsToTable(tsStr)
     {
         var spl = tsStr.split(",");
-        let hour = spl[0];
-        let min = spl[1];
-        let lenMins = spl[2];
-        let days = spl[3];
+        var hour = spl[0];
+        var min = spl[1];
+        var lenMins = spl[2];
+        var days = spl[3];
         var dnums = DaysToNums(days);
+
+        var strMin = (min + "").length == 1 ? "0" + min : "" + min;
+
+        var cellCount = lenMins / 15;
+
+        var startHourMin = hour + ":" + strMin;
+        var startElems = dnums.map(function (num) { return "td" + num + "-" + startHourMin; });
+        //console.log(startElems);
+        for (var se in startElems) {
+            var str = startElems[se];
+            var strIdArray = ToSlotTds(str, cellCount);
+            for (var i in strIdArray) {
+                console.log(strIdArray[i]);
+                var elem1 = document.getElementById(strIdArray[i]);
+
+                elem1.style.backgroundColor = '#7777ff';
+            }
+            //var elem = document.getElementById(startElems[se]);
+            //elem.style.backgroundColor = '#dddddd';
+        }
     }
 
     $(document).ready(function () {
@@ -167,6 +206,9 @@
         var arr = Array.prototype.slice.call(timeSlots);
         var contentsLst = arr.map(function (a) { return a.textContent; });
         console.log(contentsLst);
+        for (var i in contentsLst) {
+            WriteTsToTable(contentsLst[i]);
+        }
     });
 
 </script>
