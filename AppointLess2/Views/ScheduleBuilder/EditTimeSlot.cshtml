@@ -9,6 +9,24 @@
 <span id="schedStart"   style="display:none">@Model.SchedStart</span>
 <span id="schedEnd"     style="display:none">@Model.SchedEnd</span>
 
+<div id="schedTimeSlotMap">
+
+@{ 
+    var currentTs = Model.Ts;
+
+    foreach (var ts in Model.Ts.Schedule.TimeSlots) {
+        if (ts.Id != currentTs.Id) {
+            int dow = ts.DaysOfWeek;
+            int todH = ts.TimeOfDay.Hours;
+            int todMin = ts.TimeOfDay.Minutes;
+            int mins = ts.LengthMinutes;
+            <span class="TimeSlot" style="display:none">@todH,@todMin,@mins,@dow</span>
+        }
+    }
+}
+
+</div>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -199,6 +217,25 @@
         }
     });
 
+    function readTSMap() {
+        var tsLst = document.getElementsByClassName("TimeSlot");
+        var arr = Array.prototype.slice.call(tsLst);
+        var contentsLst = arr.map(function (a) { return a.textContent; });
+        return contentsLst;
+    }
+
+    function binaryDowToBoolList(bVal) {
+        return [
+            (bVal & 1) != 0,
+            (bVal & 2) != 0,
+            (bVal & 4) != 0,
+            (bVal & 8) != 0,
+            (bVal & 16) != 0,
+            (bVal & 32) != 0,
+            (bVal & 64) != 0,
+        ];
+    }
+
     function inputChanged() {
         console.log("changed");
         clearCanvas();
@@ -211,6 +248,19 @@
         var mins = parseInt(lm);
         var y = Math.round((h + m / 60) * 10);
         WriteToCanvas(y, mins, days, "#FF000088");
+
+        var tslLst = readTSMap();
+        console.log(tslLst);
+
+        tslLst.forEach(function (tsl) {
+            var ints = tsl.split(",").map(function (s) { return parseInt(s); });
+            var days = binaryDowToBoolList(ints[3]);
+            var h = ints[0];
+            var m = ints[1];
+            var mins = ints[2];
+            var y = Math.round((h + m / 60) * 10);
+            WriteToCanvas(y, mins, days, "#0000FF88");
+        });
         //WriteToCanvas(y, mins, days, rgba(10, 10, 10, 1));
         
         Lines();

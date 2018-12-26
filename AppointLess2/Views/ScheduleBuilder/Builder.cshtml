@@ -4,66 +4,173 @@
     ViewBag.Title = "Builder";
 }
 
-<h2>Builder</h2>
+<h2>Ajanvarauslistan hallinta</h2>
 
 
 @using (Html.BeginForm("Edit", "ScheduleBuilder", new { Id = Model.Id }))
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>ScheduleVM</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.Id)
-    @Html.HiddenFor(model => model.UserID)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <hr />
+        <h4>Yleiset tiedot</h4>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.UserID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
         </div>
-    </div>
 
-    @*<input type="number" name="DailyEndTime" min="0" max="24">*@
+        @*<input type="number" name="DailyEndTime" min="0" max="24">*@
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.DailyStartTime, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.DailyStartTime, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.DailyStartTime, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.DailyStartTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DailyStartTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DailyStartTime, "", new { @class = "text-danger" })
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.DailyEndTime, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.DailyEndTime, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.DailyEndTime, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.DailyEndTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DailyEndTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DailyEndTime, "", new { @class = "text-danger" })
+            </div>
         </div>
-    </div>
 
-            @*<input type="number" name="DailyStartTime" min="0" max="24">*@
-            @*<input type="number" name="DailyEndTime" min="0" max="24">*@
+        @*<input type="number" name="DailyStartTime" min="0" max="24">*@
+        @*<input type="number" name="DailyEndTime" min="0" max="24">*@
 
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
         </div>
+
+        @*@Html.Partial("TimeSlotLst", Model.TimeSlotVMs)*@
+        @Html.Partial("TimeSlotLst", new Tuple<int, IEnumerable<AppointLess2.ViewModels.ScheduleViewModels.TimeSlotVM>>(Model.Id, Model.TimeSlotVMs))
+
     </div>
-
-    @*@Html.Partial("TimeSlotLst", Model.TimeSlotVMs)*@
-    @Html.Partial("TimeSlotLst", new Tuple<int, IEnumerable<AppointLess2.ViewModels.ScheduleViewModels.TimeSlotVM>>(Model.Id, Model.TimeSlotVMs))
-
-</div>
 }
-
 <div>
-    @Html.ActionLink("Back to List", "Index", "Home")
+    @Html.ActionLink("Takaisin aikataululistaan", "Index", "Home")
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<div class="jumbotron">
+
+    <h4>Viikkonäkymä</h4>
+
+    @{
+        // Write schedule timeslots for javascript
+        var timeSlots = Model.TimeSlotVMs.Select(ts =>
+                                        new {
+                                            hour = ts.TimeOfDay.Hours,
+                                            min = ts.TimeOfDay.Minutes,
+                                            lenghtMins = ts.LengthMinutes,
+                                            days = ts.DaysInt
+                                        });
+        foreach (var slot in timeSlots)
+        {
+            <span class="timeslot">@slot.hour,@slot.min,@slot.lenghtMins,@slot.days</span>
+        }
+
+        int startHour = 0;
+        int endHour = 24;
+
+        if (Model.DailyStartTime != null && Model.DailyEndTime != null)
+        {
+            startHour = (int)Model.DailyStartTime;
+            endHour = (int)Model.DailyEndTime;
+        }
+
+        @*<table style="border: 1px solid black;">*@
+        <table style="table-layout: fixed; width: 100%;">
+            @{
+                <tr>
+                    <th></th>
+                    <th>Ma</th>
+                    <th>Ti</th>
+                    <th>Ke</th>
+                    <th>To</th>
+                    <th>Pe</th>
+                    <th>La</th>
+                    <th>Su</th>
+                </tr>
+
+                var quarterMins = new List<string>() { "00", "15", "30", "45" };
+                for (int hour = startHour; hour < endHour; hour++)
+                {
+                    foreach (var mins in quarterMins)
+                    {
+                        <tr>
+                            <td>@hour:@mins</td>
+                            <td id="td1-@hour:@mins"></td>
+                            <td id="td2-@hour:@mins"></td>
+                            <td id="td3-@hour:@mins"></td>
+                            <td id="td4-@hour:@mins"></td>
+                            <td id="td5-@hour:@mins"></td>
+                            <td id="td6-@hour:@mins"></td>
+                            <td id="td7-@hour:@mins"></td>
+                        </tr>
+                    }
+                }
+            }
+        </table>
+    }
+
+</div>
+
+    <div>
+        @Html.ActionLink("Takaisin aikataululistaan", "Index", "Home")
+    </div>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script>
+    function DaysToNums(days) {
+        var nums = [
+            (days & 1) ? 1 : -1,
+            (days & 2) ? 2 : -1,
+            (days & 4) ? 3 : -1,
+            (days & 8) ? 4 : -1,
+            (days & 16) ? 5 : -1,
+            (days & 32) ? 6 : -1,
+            (days & 64) ? 7 : -1,
+        ];
+        return nums.filter(function (v) { return v != -1 });
+    }
+
+    function WriteTsToTable(tsStr)
+    {
+        var spl = tsStr.split(",");
+        let hour = spl[0];
+        let min = spl[1];
+        let lenMins = spl[2];
+        let days = spl[3];
+        var dnums = DaysToNums(days);
+    }
+
+    $(document).ready(function () {
+        var dst = @Model.DailyStartTime;
+        var det = @Model.DailyEndTime;
+        var timeSlots = document.getElementsByClassName("timeslot");
+        var arr = Array.prototype.slice.call(timeSlots);
+        var contentsLst = arr.map(function (a) { return a.textContent; });
+        console.log(contentsLst);
+    });
+
+</script>
+
+
+
+

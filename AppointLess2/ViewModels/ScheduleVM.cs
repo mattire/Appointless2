@@ -44,8 +44,6 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
     public class TimeSlotVM
     {
-        //private TimeSlot ts;
-
         public long Id { get; set; }
 
         [Display(Name = "Viikonpäivät")]
@@ -61,9 +59,11 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
         [Display(Name = "Pituus minuutteina")]
         public int LengthMinutes { get; set; }
 
+        public int DaysInt { get; set; }
         public int ScheduleID { get; set; }
         public int? SchedStart { get; private set; }
         public int? SchedEnd { get; private set; }
+        public TimeSlot Ts { get; set; }
 
         //public virtual Schedule Schedule { get; set; }
         public TimeSlotVM()
@@ -74,12 +74,12 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
         public TimeSlotVM(TimeSlot ts, Schedule sch = null)
         {
-            //this.ts = ts;
+            this.Ts = ts;
             this.Id             = ts.Id;
             this.TimeOfDay      = ts.TimeOfDay     ;
             this.LengthMinutes  = ts.LengthMinutes ;
             this.ScheduleID     = ts.ScheduleID    ;
-            int daysInt = ts.DaysOfWeek;
+            DaysInt = ts.DaysOfWeek;
 
             if (sch != null)
             {
@@ -91,13 +91,13 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
                 SchedEnd = ts.Schedule.EndOfDay;
             }
 
-            var mon = new SelectListItem() { Selected = (daysInt & 1)  != 0, Text = "Ma", Value = "Ma" };
-            var tue = new SelectListItem() { Selected = (daysInt & 2)  != 0, Text = "Ti", Value = "Ti" };
-            var wed = new SelectListItem() { Selected = (daysInt & 4)  != 0, Text = "Ke", Value = "Ke" };
-            var thu = new SelectListItem() { Selected = (daysInt & 8)  != 0, Text = "To", Value = "To" };
-            var fri = new SelectListItem() { Selected = (daysInt & 16) != 0, Text = "Pe", Value = "Pe" };
-            var sat = new SelectListItem() { Selected = (daysInt & 32) != 0, Text = "La", Value = "La" };
-            var sun = new SelectListItem() { Selected = (daysInt & 64) != 0, Text = "Su", Value = "Su" };
+            var mon = new SelectListItem() { Selected = (DaysInt & 1)  != 0, Text = "Ma", Value = "Ma" };
+            var tue = new SelectListItem() { Selected = (DaysInt & 2)  != 0, Text = "Ti", Value = "Ti" };
+            var wed = new SelectListItem() { Selected = (DaysInt & 4)  != 0, Text = "Ke", Value = "Ke" };
+            var thu = new SelectListItem() { Selected = (DaysInt & 8)  != 0, Text = "To", Value = "To" };
+            var fri = new SelectListItem() { Selected = (DaysInt & 16) != 0, Text = "Pe", Value = "Pe" };
+            var sat = new SelectListItem() { Selected = (DaysInt & 32) != 0, Text = "La", Value = "La" };
+            var sun = new SelectListItem() { Selected = (DaysInt & 64) != 0, Text = "Su", Value = "Su" };
             //DaysOfWeek = new SelectList(new[] {mon,tue,wed,thu,fri,sat,sun,});
             DaysOfWeek = new List<SelectListItem>(new[] { mon, tue, wed, thu, fri, sat, sun, });
             
