@@ -35,6 +35,15 @@
           <Property Name="Status" Type="tinyint" Nullable="false" />
           <Property Name="ScheduleID" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Holiday">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="startDate" Type="date" Nullable="false" />
+          <Property Name="endDate" Type="date" Nullable="false" />
+        </EntityType>
         <EntityType Name="Schedule">
           <Key>
             <PropertyRef Name="Id" />
@@ -67,6 +76,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Holiday__UserID__02FC7413">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Holiday" Type="Self.Holiday" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Holiday">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Schedule__UserID__5DCAEF64">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Schedule" Type="Self.Schedule" Multiplicity="*" />
@@ -94,11 +115,16 @@
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Booking" EntityType="Self.Booking" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Holiday" EntityType="Self.Holiday" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedule" EntityType="Self.Schedule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimeSlot" EntityType="Self.TimeSlot" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Booking__Schedul__6383C8BA" Association="Self.FK__Booking__Schedul__6383C8BA">
             <End Role="Schedule" EntitySet="Schedule" />
             <End Role="Booking" EntitySet="Booking" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Holiday__UserID__02FC7413" Association="Self.FK__Holiday__UserID__02FC7413">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Holiday" EntitySet="Holiday" />
           </AssociationSet>
           <AssociationSet Name="FK__Schedule__UserID__5DCAEF64" Association="Self.FK__Schedule__UserID__5DCAEF64">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -130,6 +156,7 @@
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Schedules" Relationship="Model.FK__Schedule__UserID__5DCAEF64" FromRole="AspNetUser" ToRole="Schedule" />
+          <NavigationProperty Name="Holidays" Relationship="Model.FK__Holiday__UserID__02FC7413" FromRole="AspNetUser" ToRole="Holiday" />
         </EntityType>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
@@ -147,6 +174,11 @@
           <AssociationSet Name="FK__TimeSlot__Schedu__60A75C0F" Association="Model.FK__TimeSlot__Schedu__60A75C0F">
             <End Role="Schedule" EntitySet="Schedules" />
             <End Role="TimeSlot" EntitySet="TimeSlots" />
+          </AssociationSet>
+          <EntitySet Name="Holidays" EntityType="Model.Holiday" />
+          <AssociationSet Name="FK__Holiday__UserID__02FC7413" Association="Model.FK__Holiday__UserID__02FC7413">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Holiday" EntitySet="Holidays" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Booking">
@@ -223,6 +255,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Holiday">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="startDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="endDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK__Holiday__UserID__02FC7413" FromRole="Holiday" ToRole="AspNetUser" />
+        </EntityType>
+        <Association Name="FK__Holiday__UserID__02FC7413">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Holiday" Role="Holiday" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Holiday">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -279,6 +333,16 @@
                 <ScalarProperty Name="LengthMinutes" ColumnName="LengthMinutes" />
                 <ScalarProperty Name="TimeOfDay" ColumnName="TimeOfDay" />
                 <ScalarProperty Name="DaysOfWeek" ColumnName="DaysOfWeek" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Holidays">
+            <EntityTypeMapping TypeName="Model.Holiday">
+              <MappingFragment StoreEntitySet="Holiday">
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

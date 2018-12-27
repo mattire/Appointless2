@@ -3,9 +3,8 @@
 @{
     ViewBag.Title = "Builder";
 }
-
+<br />
 <h2>Ajanvarauslistan hallinta</h2>
-
 
 @using (Html.BeginForm("Edit", "ScheduleBuilder", new { Id = Model.Id }))
 {
@@ -78,7 +77,7 @@
                                         });
         foreach (var slot in timeSlots)
         {
-            <span class="timeslot">@slot.hour,@slot.min,@slot.lenghtMins,@slot.days</span>
+            <span class="timeslot" style="display:none">@slot.hour,@slot.min,@slot.lenghtMins,@slot.days</span>
         }
 
         int startHour = 0;
@@ -192,7 +191,7 @@
                 console.log(strIdArray[i]);
                 var elem1 = document.getElementById(strIdArray[i]);
 
-                elem1.style.backgroundColor = '#7777ff';
+                elem1.style.backgroundColor = '#00aaff';
             }
             //var elem = document.getElementById(startElems[se]);
             //elem.style.backgroundColor = '#dddddd';

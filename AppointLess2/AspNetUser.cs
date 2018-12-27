@@ -18,6 +18,7 @@ namespace AppointLess2
         public AspNetUser()
         {
             this.Schedules = new HashSet<Schedule>();
+            this.Holidays = new HashSet<Holiday>();
         }
     
         public string Id { get; set; }
@@ -35,5 +36,7 @@ namespace AppointLess2
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Schedule> Schedules { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Holiday> Holidays { get; set; }
     }
 }
