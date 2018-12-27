@@ -6,12 +6,40 @@
 
 <h2>CreateTimeSlot</h2>
 
+<span id="schedStart" style="display:none">@Model.SchedStart</span>
+<span id="schedEnd" style="display:none">@Model.SchedEnd</span>
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
+<div id="schedTimeSlotMap">
+
+    @{
+        var currentTs = Model.Ts;
+
+        foreach (var ts in Model.Ts.Schedule.TimeSlots)
+        {
+            if (ts.Id != currentTs.Id)
+            {
+                int dow = ts.DaysOfWeek;
+                int todH = ts.TimeOfDay.Hours;
+                int todMin = ts.TimeOfDay.Minutes;
+                int mins = ts.LengthMinutes;
+                <span class="TimeSlot" style="display:none">@todH,@todMin,@mins,@dow</span>
+            }
+        }
+
+        //if (Model.TimeOfDay == null && Model.Ts.Schedule.StartOfDay != null)
+        //{
+        //    Model.TimeOfDay = new TimeSpan((int)Model.Ts.Schedule.StartOfDay, 0, 0);
+        //    Model.LengthMinutes = 30;
+        //}
+    }
+
+</div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
         <h4>TimeSlotVM</h4>
         <hr />
 
@@ -19,9 +47,23 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DaysOfWeek, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.CheckBoxListFor(model => model.DaysOfWeek, Model.DaysOfWeek, new { @class = "form-horizontal", @style = "margin-left:40px;" })
-                @*@Html.EditorFor(model => model.DaysOfWeek, new { htmlAttributes = new { @class = "form-control" } })*@
+                @*@Html.CheckBoxListFor(model => model.DaysOfWeek, Model.DaysOfWeek, new { @class = "form-horizontal", @style = "margin-left:40px;" })*@
+                @{
+                    foreach (var day in Model.DaysOfWeek)
+                    {
+                        if (day.Selected)
+                        {
+                            <input name="@day.Text" id="@day.Text" type="checkbox" checked="checked" value="@day.Text" data-val="true" oninput="inputChanged()"> @day.Text;
+                        }
+                        else
+                        {
+                            <input name="@day.Text" id="@day.Text" type="checkbox" value="@day.Text" data-val="true" oninput="inputChanged()"> @day.Text;
+                        }
+                    }
+                }
+
                 @Html.ValidationMessageFor(model => model.DaysOfWeek, "", new { @class = "text-danger" })
+
             </div>
         </div>
 
@@ -44,26 +86,36 @@
         @Html.HiddenFor(model => model.ScheduleID)
 
         @*<div class="form-group">
-            @Html.LabelFor(model => model.ScheduleID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ScheduleID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ScheduleID, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
+                @Html.LabelFor(model => model.ScheduleID, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ScheduleID, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ScheduleID, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
+
+    <canvas id="schedMiniMap" width="350" height="240"
+            style="border:1px solid #c3c3c3;">
+        Your browser does not support the canvas element.
+    </canvas>
+
 
     <div>
         @Html.ActionLink("Back to Builder", "Edit", "ScheduleBuilder", new { Id = Model.ScheduleID }, null)
         @*@Html.ActionLink("Back to List", "Index")*@
     </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/TimeSlotGraph.js"></script>
+

@@ -75,6 +75,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
         public TimeSlotVM(TimeSlot ts, Schedule sch = null)
         {
             this.Ts = ts;
+            if (ts.Schedule == null && sch != null) { ts.Schedule = sch; }
             this.Id             = ts.Id;
             this.TimeOfDay      = ts.TimeOfDay     ;
             this.LengthMinutes  = ts.LengthMinutes ;

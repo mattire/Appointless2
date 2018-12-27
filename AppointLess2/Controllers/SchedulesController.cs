@@ -62,7 +62,7 @@ namespace AppointLess2.Controllers
             {
                 db.Schedules.Add(schedule);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.UserID = new SelectList(db.AspNetUsers, "Id", "Email", schedule.UserID);
@@ -127,7 +127,7 @@ namespace AppointLess2.Controllers
             Schedule schedule = db.Schedules.Find(id);
             db.Schedules.Remove(schedule);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         protected override void Dispose(bool disposing)
