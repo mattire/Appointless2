@@ -1,0 +1,81 @@
+﻿@model AppointLess2.ViewModels.BookingWeekVM
+
+@{
+    ViewBag.Title = "WeekView";
+}
+
+<h2>Ajanvaraus - @Model.Schedule.Name</h2>
+
+@if (Model.WeekDays.First() > DateTime.Now)
+{
+    @Html.ActionLink("Edellinen viikko", "Previous", "Bookings", new {
+    Day = Model.WeekDays.ElementAt(0).Day,
+    Month = Model.WeekDays.ElementAt(0).Month,
+    Year = Model.WeekDays.ElementAt(0).Year,
+    Schedule = Model.Schedule.Id
+}, null)
+}
+<br />
+@Html.ActionLink("Seuraava viikko", "Next", "Bookings", new {
+    Day = Model.WeekDays.ElementAt(0).Day,
+    Month = Model.WeekDays.ElementAt(0).Month,
+    Year = Model.WeekDays.ElementAt(0).Year,
+    Schedule = Model.Schedule.Id
+}, null)
+<br />
+
+
+@{
+    // Write schedule timeslots and bookings for javascript
+    var timeSlots = Model.Schedule.TimeSlots.Select(ts =>
+                                    new
+                                    {
+                                        hour = ts.TimeOfDay.Hours,
+                                        min = ts.TimeOfDay.Minutes,
+                                        lenghtMins = ts.LengthMinutes,
+                                        days = (int)ts.DaysOfWeek,
+                                        //bookedDays = ts.Bookings.Select(b=>b.Time)
+                                    });
+    foreach (var slot in timeSlots)
+    {
+        <span class="timeslot" style="display:none">@slot.hour,@slot.min,@slot.lenghtMins,@slot.days</span>
+    }
+
+    int startHour = Model.Schedule.StartOfDay ?? 0;
+    int endHour = Model.Schedule.EndOfDay ?? 24;
+}
+
+<div class="jumbotron">
+    <table style="table-layout: fixed; width: 100%;">
+        <tr>
+            <td>&nbsp;     </td>
+            @{
+                foreach (var day in Model.WeekDays)
+                {
+                    <th>@Model.GetDayName(day.DayOfWeek) @day.ToString("d.M")</th>
+                }
+            }
+        </tr>
+
+        @{
+            var quarterMins = new List<string>() { "00", "15", "30", "45" };
+            for (int hour = startHour; hour < endHour; hour++)
+            {
+                foreach (var mins in quarterMins)
+                {
+                    <tr>
+                        <td>@hour:@mins</td>
+                        <td id="td1-@hour:@mins"></td>
+                        <td id="td2-@hour:@mins"></td>
+                        <td id="td3-@hour:@mins"></td>
+                        <td id="td4-@hour:@mins"></td>
+                        <td id="td5-@hour:@mins"></td>
+                        <td id="td6-@hour:@mins"></td>
+                        <td id="td7-@hour:@mins"></td>
+                    </tr>
+                }
+            }
+        }
+
+    </table>
+</div>

@@ -34,6 +34,7 @@
           <Property Name="Phone" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Status" Type="tinyint" Nullable="false" />
           <Property Name="ScheduleID" Type="int" Nullable="false" />
+          <Property Name="TimeSlotID" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="Holiday">
           <Key>
@@ -73,6 +74,18 @@
             </Principal>
             <Dependent Role="Booking">
               <PropertyRef Name="ScheduleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Booking__TimeSlo__03F0984C">
+          <End Role="TimeSlot" Type="Self.TimeSlot" Multiplicity="1" />
+          <End Role="Booking" Type="Self.Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeSlot">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Booking">
+              <PropertyRef Name="TimeSlotID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -120,6 +133,10 @@
           <EntitySet Name="TimeSlot" EntityType="Self.TimeSlot" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Booking__Schedul__6383C8BA" Association="Self.FK__Booking__Schedul__6383C8BA">
             <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="Booking" EntitySet="Booking" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Booking__TimeSlo__03F0984C" Association="Self.FK__Booking__TimeSlo__03F0984C">
+            <End Role="TimeSlot" EntitySet="TimeSlot" />
             <End Role="Booking" EntitySet="Booking" />
           </AssociationSet>
           <AssociationSet Name="FK__Holiday__UserID__02FC7413" Association="Self.FK__Holiday__UserID__02FC7413">
@@ -180,6 +197,10 @@
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Holiday" EntitySet="Holidays" />
           </AssociationSet>
+          <AssociationSet Name="FK__Booking__TimeSlo__03F0984C" Association="Model.FK__Booking__TimeSlo__03F0984C">
+            <End Role="TimeSlot" EntitySet="TimeSlots" />
+            <End Role="Booking" EntitySet="Bookings" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Booking">
           <Key>
@@ -194,6 +215,8 @@
           <Property Name="Status" Type="Byte" Nullable="false" />
           <Property Name="ScheduleID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Schedule" Relationship="Model.FK__Booking__Schedul__6383C8BA" FromRole="Booking" ToRole="Schedule" />
+          <Property Name="TimeSlotID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="TimeSlot" Relationship="Model.FK__Booking__TimeSlo__03F0984C" FromRole="Booking" ToRole="TimeSlot" />
         </EntityType>
         <EntityType Name="Schedule">
           <Key>
@@ -218,6 +241,7 @@
           <Property Name="LengthMinutes" Type="Int32" Nullable="false" />
           <Property Name="ScheduleID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Schedule" Relationship="Model.FK__TimeSlot__Schedu__60A75C0F" FromRole="TimeSlot" ToRole="Schedule" />
+          <NavigationProperty Name="Bookings" Relationship="Model.FK__Booking__TimeSlo__03F0984C" FromRole="TimeSlot" ToRole="Booking" />
         </EntityType>
         <Association Name="FK__Schedule__UserID__5DCAEF64">
           <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
@@ -277,6 +301,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Booking__TimeSlo__03F0984C">
+          <End Type="Model.TimeSlot" Role="TimeSlot" Multiplicity="1" />
+          <End Type="Model.Booking" Role="Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeSlot">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Booking">
+              <PropertyRef Name="TimeSlotID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -304,6 +340,7 @@
           <EntitySetMapping Name="Bookings">
             <EntityTypeMapping TypeName="Model.Booking">
               <MappingFragment StoreEntitySet="Booking">
+                <ScalarProperty Name="TimeSlotID" ColumnName="TimeSlotID" />
                 <ScalarProperty Name="ScheduleID" ColumnName="ScheduleID" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />

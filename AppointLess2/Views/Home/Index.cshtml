@@ -1,19 +1,12 @@
-﻿@model IEnumerable<AppointLess2.Schedule>
+﻿@model Tuple<IQueryable<Schedule>, IEnumerable<Tuple<int, string>>>
+@*@model IEnumerable<AppointLess2.Schedule>*@
 
 @{
     ViewBag.Title = "Home Page";
 }
 
 <script src="~/Scripts/jquery-3.3.1.js"></script>
-<script>
-    $(document).ready(function () {
-        console.log("nof fair!");
-    });
 
-    function Boo() {
-        alert("boo");
-    }
-</script>
 
 
 
@@ -26,12 +19,12 @@
 @if (Request.IsAuthenticated)
 {
     @Html.ActionLink("Schedules", "Index", "Schedules")
-    @Html.Partial("../Schedules/Index", Model)
-
+    @Html.Partial("../Schedules/Index", Model.Item1)
     @Html.ActionLink("Holidays", "Index", "Holidays")
 }
 
-<button onclick="Boo();"></button>
+@Html.Partial("../Bookings/Index", Model.Item2)
+
 
 <div class="row">
     <div class="col-md-4">

@@ -14,6 +14,12 @@ namespace AppointLess2
     
     public partial class TimeSlot
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TimeSlot()
+        {
+            this.Bookings = new HashSet<Booking>();
+        }
+    
         public long Id { get; set; }
         public byte DaysOfWeek { get; set; }
         public System.TimeSpan TimeOfDay { get; set; }
@@ -21,5 +27,7 @@ namespace AppointLess2
         public int ScheduleID { get; set; }
     
         public virtual Schedule Schedule { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

@@ -22,7 +22,9 @@ namespace AppointLess2
         public string Phone { get; set; }
         public byte Status { get; set; }
         public int ScheduleID { get; set; }
+        public long TimeSlotID { get; set; }
     
         public virtual Schedule Schedule { get; set; }
+        public virtual TimeSlot TimeSlot { get; set; }
     }
 }
