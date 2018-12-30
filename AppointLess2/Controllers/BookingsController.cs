@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AppointLess2;
+using AppointLess2.ViewModels;
 
 namespace AppointLess2.Controllers
 {
@@ -71,6 +72,38 @@ namespace AppointLess2.Controllers
             return View("WeekView", weekVM);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        
+        //public ActionResult Create(BookingWeekVM model)
+        public ActionResult Create(BookingVM model)
+        {
+            try
+            {
+                var email = model.Email;
+                System.Diagnostics.Debug.WriteLine(model.WeekStartYear);
+                System.Diagnostics.Debug.WriteLine(model.EventDate);
+                System.Diagnostics.Debug.WriteLine(model.EventTime);
+                System.Diagnostics.Debug.WriteLine(email);
+                // TODO: Add insert logic here
+                var eventGuid = Guid.NewGuid();
+
+                //var t = DiaryEvent.ToDateTimeAndDuration(model.WeekStartYear, model.EventDate, model.EventTime);
+                //
+                //var ev = DiaryEvent.CreateNewEvent(t.Item1, t.Item2, eventGuid, email);
+                Utils.EmailManager.SendConfirmationMail(email, eventGuid);
+
+
+                // Need to reload currently viewed week
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
 
         //// GET: Bookings/Details/5
