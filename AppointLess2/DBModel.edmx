@@ -35,6 +35,7 @@
           <Property Name="Status" Type="tinyint" Nullable="false" />
           <Property Name="ScheduleID" Type="int" Nullable="false" />
           <Property Name="TimeSlotID" Type="bigint" Nullable="false" />
+          <Property Name="UUID" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="Holiday">
           <Key>
@@ -217,6 +218,7 @@
           <NavigationProperty Name="Schedule" Relationship="Model.FK__Booking__Schedul__6383C8BA" FromRole="Booking" ToRole="Schedule" />
           <Property Name="TimeSlotID" Type="Int64" Nullable="false" />
           <NavigationProperty Name="TimeSlot" Relationship="Model.FK__Booking__TimeSlo__03F0984C" FromRole="Booking" ToRole="TimeSlot" />
+          <Property Name="UUID" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="Schedule">
           <Key>
@@ -340,6 +342,7 @@
           <EntitySetMapping Name="Bookings">
             <EntityTypeMapping TypeName="Model.Booking">
               <MappingFragment StoreEntitySet="Booking">
+                <ScalarProperty Name="UUID" ColumnName="UUID" />
                 <ScalarProperty Name="TimeSlotID" ColumnName="TimeSlotID" />
                 <ScalarProperty Name="ScheduleID" ColumnName="ScheduleID" />
                 <ScalarProperty Name="Status" ColumnName="Status" />

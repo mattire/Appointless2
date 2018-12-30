@@ -35,8 +35,8 @@
     int startHour = Model.Schedule.StartOfDay ?? 0;
     int endHour = Model.Schedule.EndOfDay ?? 24;
 
-    var weekStart = Model.WeekDays.First();
-    var currentDay = Model.Current;
+    var weekStart = Model.WeekDays.First().ToString("yyyy.MM.dd");
+    var currentDay = Model.Current.ToString("yyyy.MM.dd");
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -46,7 +46,9 @@
             @{
                 foreach (var day in Model.WeekDays)
                 {
-                    <th>@Model.GetDayName(day.DayOfWeek) @day.ToString("d.M")</th>
+                    int dow = (int)day.DayOfWeek;
+                    var dateStr = day.ToString("yyyy.MM.dd");
+                    <th id="th-@dow" data-date-text="@dateStr">@Model.GetDayName(day.DayOfWeek) @day.ToString("d.M")</th>
                 }
             }
         </tr>
@@ -83,10 +85,13 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
-        <label id="dateAndTime"></label>
+        <label id="dateAndTime"></label><br />
         @Html.HiddenFor(m => m.Booking.EventDate)
-        @Html.HiddenFor(m => m.Booking.EventTime)
-        @Html.HiddenFor(m => m.Booking.WeekStartYear)
+        @Html.HiddenFor(m => m.Schedule.Id);
+        @Html.HiddenFor(m => m.Booking.ScheduleId);
+        @Html.HiddenFor(m => m.Booking.TimeSlotId);
+        @*@Html.HiddenFor(m => m.Booking.EventTime)
+            @Html.HiddenFor(m => m.Booking.WeekStartYear)*@
 
         @Html.LabelFor(m => m.Booking.Email) <br />
         @Html.TextBoxFor(m => m.Booking.Email) <br />
@@ -203,18 +208,40 @@
 
     var WeekTimeSlots = new Array();
 
+    function ToMonthAndDay(dayOfWeek)
+    {
+        var key = 'th-' + dayOfWeek;
+        var th = document.getElementById(key);
+        
+        return [th.innerText, th.dataset.dateText];
+    }
+
     function HandleClick(tsId, elem) {
         var day = DayNumFromDtStr(elem.id);
         var pair = WeekTimeSlots.find(function (p) { return p.key == tsId; });
         var spl = pair.value;
         var time = spl[0] + ":" + MinsToString(spl[1]) + " len: " + spl[2];
         //var evInpWidth = $('#EventInput').clientWidth;
+        
+        var time = spl[0] + ":" + MinsToString(spl[1]);
+        var weekStart = "@weekStart";
+        var dayOfWeek = parseInt(elem.id.split('-')[0].slice(2));
+        var tup = ToMonthAndDay(dayOfWeek);
+        var md = tup[0];
+        var dateString = tup[1];
+
+        //$("#dateAndTime").text(day.textContent + " " + time);
+        $("#dateAndTime").text(md + " " + time + " " + spl[2] + "minuuttia");
+        //$("#EventDate").text(dateString);
+        //$("#Booking_TimeSlotId").text(tsId);
+        var elemSlotId = document.getElementById("Booking_TimeSlotId");
+        var bookingED = document.getElementById("Booking_EventDate");
+        elemSlotId.value = tsId;
+        bookingED.value = dateString;
+        
+
         var evInpWidth = document.getElementById("EventInput").clientWidth;
-
-        //var middle = (window.innerWidth / 2) - (evInpWidth / 2);
-
         $('#EventInput').show();
-
         console.log($('#tableContainer').position.left);
         console.log($('#tableContainer').width());
         console.log($('#EventInput').width());

@@ -77,32 +77,70 @@ namespace AppointLess2.Controllers
         [ValidateAntiForgeryToken]
         
         //public ActionResult Create(BookingWeekVM model)
-        public ActionResult Create(BookingVM model)
+        public ActionResult Create([Bind(Include = "Email, Name")] BookingVM model)
         {
+            //Request.Form[0]
+
+            System.Diagnostics.Debug.WriteLine(ModelState.IsValid);
+            System.Diagnostics.Debug.WriteLine(Request.Form.Keys);
+
+            //if (ModelState.IsValid)
+            //{
             try
             {
-                var email = model.Email;
-                System.Diagnostics.Debug.WriteLine(model.WeekStartYear);
-                System.Diagnostics.Debug.WriteLine(model.EventDate);
-                System.Diagnostics.Debug.WriteLine(model.EventTime);
-                System.Diagnostics.Debug.WriteLine(email);
-                // TODO: Add insert logic here
+                var tsId    = Request.Form["Booking.TimeSlotId" ];
+                var timeSlotId = int.Parse(tsId);
+
+                var ts = db.TimeSlots.Find(timeSlotId);
+
+                var evD     = Request.Form["Booking.EventDate"  ];
+                var schedId = Request.Form["Schedule.Id"        ];
+                var email   = Request.Form["Booking.Email"      ];
+                var name    = Request.Form["Booking.Name"       ];
+                var phone   = Request.Form["Booking.PhoneNumber"];
+
+                DateTime start = Utils.Utils.FromString(evD);
+
                 var eventGuid = Guid.NewGuid();
 
+                var b = new Booking()
+                {
+                    ScheduleID = int.Parse(schedId),
+                    TimeSlotID = int.Parse(tsId),
+                    Email = email,
+                    Name = name,
+                    Phone = phone,
+                    Status = 0,
+                    //LengthMinutes = ts.LengthMinutes,
+                    Time = start,
+                    UUID = eventGuid
+                };
+
+                System.Diagnostics.Debug.WriteLine(email);
+                // TODO: Add insert logic here
+                //var eventGuid = Guid.NewGuid();
+
+
+                //Booking book = Utils.DbUtils.CreateBooking(model);
+                db.Bookings.Add(b);
+                db.SaveChanges();
+                
                 //var t = DiaryEvent.ToDateTimeAndDuration(model.WeekStartYear, model.EventDate, model.EventTime);
                 //
                 //var ev = DiaryEvent.CreateNewEvent(t.Item1, t.Item2, eventGuid, email);
                 Utils.EmailManager.SendConfirmationMail(email, eventGuid);
 
 
-                // Need to reload currently viewed week
+                    // Need to reload currently viewed week
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View();
+                }
+            //}
+            return View();
         }
 
 

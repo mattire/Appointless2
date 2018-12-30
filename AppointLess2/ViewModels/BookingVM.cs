@@ -26,9 +26,13 @@ namespace AppointLess2.ViewModels
         [Display(Name = "Puhelin numero")]
         public string PhoneNumber { get; set; }
 
-        public string EventDate { get; set; }
-        public string EventTime { get; set; }
+        public string EventDate     { get; set; }
+        public string EventTime     { get; set; }
         public string WeekStartYear { get; set; }
+
+
+        public int    ScheduleId { get; set; }
+        public int    TimeSlotId { get; set; }
     }
 
     /// <summary>
