@@ -44,8 +44,8 @@ namespace AppointLess2.Utils
 
         public static string GetBodyTemplate() {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "FullCalendar_MVC.Resources.EmailTemplate.txt";
-
+            var resourceName = "AppointLess2.Resources.EmailTemplate.txt";
+            
             string result;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))

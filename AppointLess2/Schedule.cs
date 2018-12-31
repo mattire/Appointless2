@@ -17,7 +17,6 @@ namespace AppointLess2
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Schedule()
         {
-            this.Bookings = new HashSet<Booking>();
             this.TimeSlots = new HashSet<TimeSlot>();
         }
     
@@ -28,8 +27,6 @@ namespace AppointLess2
         public Nullable<int> EndOfDay { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Booking> Bookings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TimeSlot> TimeSlots { get; set; }
     }

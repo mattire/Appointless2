@@ -32,11 +32,12 @@
         <span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
     }
 
+
     int startHour = Model.Schedule.StartOfDay ?? 0;
     int endHour = Model.Schedule.EndOfDay ?? 24;
 
-    var weekStart = Model.WeekDays.First().ToString("yyyy.MM.dd");
-    var currentDay = Model.Current.ToString("yyyy.MM.dd");
+
+    var bookings = Model.Schedule.TimeSlots.SelectMany(ts => ts.Bookings);
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -78,35 +79,19 @@
 
 <div id="EventInput" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
 
-    <h4>Varaa aika</h4>
-    @*@using (Html.BeginForm("Create", "BookingView", FormMethod.Post))*@
-    @using (Html.BeginForm("Create", "BookingView"))
+    @using (Html.BeginForm("CreateBooking1", "BookingView", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
-        <label id="dateAndTime"></label><br />
+        <label id="dateAndTime" 
+               style="padding:10px 10px 10px 10px; white-space: pre-wrap"></label><br />
         @Html.HiddenFor(m => m.Booking.EventDate)
-        @Html.HiddenFor(m => m.Schedule.Id);
-        @Html.HiddenFor(m => m.Booking.ScheduleId);
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
-        @*@Html.HiddenFor(m => m.Booking.EventTime)
-            @Html.HiddenFor(m => m.Booking.WeekStartYear)*@
 
-        @Html.LabelFor(m => m.Booking.Email) <br />
-        @Html.TextBoxFor(m => m.Booking.Email) <br />
-        @Html.ValidationMessageFor(m => m.Booking.Email) <br />
-
-        @Html.LabelFor(m => m.Booking.Name) <br />
-        @Html.TextBoxFor(m => m.Booking.Name) <br />
-
-        @Html.LabelFor(m => m.Booking.PhoneNumber) <br />
-        @Html.TextBoxFor(m => m.Booking.PhoneNumber) <br />
-
-        <br />
-        <input type="submit" value="Lähetä vahvistus viesti" name="answer" style="font-size:medium"
-               formaction=@Url.Action("Create") formmethod="post" class="btn btn-primary" /><br />
-        <input type="button" value="Sulje" onclick="HideInput();" />
+        <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
+               formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
+        <input type="button" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
 
     }
 
@@ -210,6 +195,8 @@
 
     function ToMonthAndDay(dayOfWeek)
     {
+        console.log(dayOfWeek);
+        dayOfWeek = dayOfWeek == 7 ? 0 : dayOfWeek;
         var key = 'th-' + dayOfWeek;
         var th = document.getElementById(key);
         
@@ -224,14 +211,13 @@
         //var evInpWidth = $('#EventInput').clientWidth;
         
         var time = spl[0] + ":" + MinsToString(spl[1]);
-        var weekStart = "@weekStart";
         var dayOfWeek = parseInt(elem.id.split('-')[0].slice(2));
         var tup = ToMonthAndDay(dayOfWeek);
         var md = tup[0];
         var dateString = tup[1];
 
         //$("#dateAndTime").text(day.textContent + " " + time);
-        $("#dateAndTime").text(md + " " + time + " " + spl[2] + "minuuttia");
+        $("#dateAndTime").text(md + " " + time + "\n" + spl[2] + "minuuttia");
         //$("#EventDate").text(dateString);
         //$("#Booking_TimeSlotId").text(tsId);
         var elemSlotId = document.getElementById("Booking_TimeSlotId");
@@ -240,19 +226,23 @@
         bookingED.value = dateString;
         
 
-        var evInpWidth = document.getElementById("EventInput").clientWidth;
+        //var evInpWidth = document.getElementById("EventInput").clientWidth;
         $('#EventInput').show();
-        console.log($('#tableContainer').position.left);
-        console.log($('#tableContainer').width());
-        console.log($('#EventInput').width());
-        console.log(window.width);
+        //console.log($('#tableContainer').position.left);
+        //console.log($('#tableContainer').width());
+        var eiWidth = $('#EventInput').width();
+        console.log(eiWidth);
+        console.log(event.clientX);
+        eiWidth = eiWidth > 400 ? 300 : eiWidth;
+        //
+        //console.log(window.width);
 
         //var middle = $('#tableContainer').position().left + ($('#tableContainer').width() / 2) - ($('#EventInput').width() / 2);
-        var middle = (window.innerWidth / 2) - ($('#EventInput').width() / 2)
-        console.log(middle);
+        //var middle = (window.innerWidth / 2) - ($('#EventInput').width() / 2)
+        //console.log(middle);
         //$('#EventInput').parent().css({ position: 'relative' });
         //$("#EventInput").css({ top: event.clientY, left: window.innerWidth / 2 - evInpWidth / 2, position: 'absolute' });
-        $("#EventInput").css({ top: event.clientY, left: middle, position: 'absolute' });
+        $("#EventInput").css({ top: event.clientY + 30, left: event.clientX - eiWidth/2, position: 'absolute' });
 
         //alert(time);
     }

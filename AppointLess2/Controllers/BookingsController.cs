@@ -17,26 +17,27 @@ namespace AppointLess2.Controllers
     {
         private Entities db = new Entities();
 
-        // GET: Bookings/ScheduleBookingView/5
-        public ActionResult BookingView(int id)
-        {
-            var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
-            
-            return View();
-        }
+        //// GET: Bookings/ScheduleBookingView/5
+        //public ActionResult BookingView(int id)
+        //{
+        //    var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
+        //    
+        //    return View();
+        //}
 
-        // GET: Bookings
-        public ActionResult Index()
-        {
-            var now = DateTime.Now;
-            var idsAndNames = db.Schedules.Select(s => new { Id = s.Id, Name = s.Name }).ToList();
-            return View(idsAndNames);
-            
-            //var bookings = db.Bookings.Include(b => b.Schedule);
-            //return View(bookings.ToList());
-        }
+        //// GET: Bookings
+        //public ActionResult Index()
+        //{
+        //    var now = DateTime.Now;
+        //    var idsAndNames = db.Schedules.Select(s => new { Id = s.Id, Name = s.Name }).ToList();
+        //    return View(idsAndNames);
+        //    
+        //    //var bookings = db.Bookings.Include(b => b.Schedule);
+        //    //return View(bookings.ToList());
+        //}
 
         // GET: WeekView/5
+
         public ActionResult WeekView(int schedule)
         {
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
@@ -72,77 +73,63 @@ namespace AppointLess2.Controllers
             return View("WeekView", weekVM);
         }
 
+        // GET: Bookings/Create
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        
-        //public ActionResult Create(BookingWeekVM model)
-        public ActionResult Create([Bind(Include = "Email, Name")] BookingVM model)
+        public ActionResult CreateBooking1()
         {
-            //Request.Form[0]
+            var eventDate = Request.Form["Booking.EventDate"];
+            var timeSlotId = Request.Form["Booking.TimeSlotId"];
+            var timeSlot = db.TimeSlots.Find(int.Parse(timeSlotId));
 
-            System.Diagnostics.Debug.WriteLine(ModelState.IsValid);
-            System.Diagnostics.Debug.WriteLine(Request.Form.Keys);
-
-            //if (ModelState.IsValid)
-            //{
-            try
-            {
-                var tsId    = Request.Form["Booking.TimeSlotId" ];
-                var timeSlotId = int.Parse(tsId);
-
-                var ts = db.TimeSlots.Find(timeSlotId);
-
-                var evD     = Request.Form["Booking.EventDate"  ];
-                var schedId = Request.Form["Schedule.Id"        ];
-                var email   = Request.Form["Booking.Email"      ];
-                var name    = Request.Form["Booking.Name"       ];
-                var phone   = Request.Form["Booking.PhoneNumber"];
-
-                DateTime start = Utils.Utils.FromString(evD);
-
-                var eventGuid = Guid.NewGuid();
-
-                var b = new Booking()
-                {
-                    ScheduleID = int.Parse(schedId),
-                    TimeSlotID = int.Parse(tsId),
-                    Email = email,
-                    Name = name,
-                    Phone = phone,
-                    Status = 0,
-                    //LengthMinutes = ts.LengthMinutes,
-                    Time = start,
-                    UUID = eventGuid
-                };
-
-                System.Diagnostics.Debug.WriteLine(email);
-                // TODO: Add insert logic here
-                //var eventGuid = Guid.NewGuid();
-
-
-                //Booking book = Utils.DbUtils.CreateBooking(model);
-                db.Bookings.Add(b);
-                db.SaveChanges();
-                
-                //var t = DiaryEvent.ToDateTimeAndDuration(model.WeekStartYear, model.EventDate, model.EventTime);
-                //
-                //var ev = DiaryEvent.CreateNewEvent(t.Item1, t.Item2, eventGuid, email);
-                Utils.EmailManager.SendConfirmationMail(email, eventGuid);
-
-
-                    // Need to reload currently viewed week
-
-                    return RedirectToAction("Index");
-                }
-                catch
-                {
-                    return View();
-                }
-            //}
-            return View();
+            BookingVM vm = new BookingVM();
+            vm.EventDate = eventDate;
+            vm.TimeSlot = timeSlot;
+            vm.TimeSlotId = timeSlot.Id;
+            //vm.EventTime = timeSlot.TimeOfDay
+            return View("Book", vm);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        //public ActionResult Create(BookingWeekVM model)
+        public ActionResult Create([Bind(Include = "Email, BookerName, PhoneNumber")] BookingVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
+                string eventDate = Request.Form["EventDate"];
+
+                DateTime eventDT = Utils.Utils.FromString(eventDate);
+
+                var book = new Booking()
+                {
+                    Email = model.Email,
+                    Name = model.BookerName,
+                    Phone = model.PhoneNumber,
+                    Time = eventDT,
+                    TimeSlotID = timeSlotId,
+                    UUID = Guid.NewGuid(),
+                    Status = 0,
+                };
+                //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
+                db.Bookings.Add(book);
+                db.SaveChanges();
+                Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID);
+                ViewBag.Email = model.Email;
+                return View("CheckEmail");
+            }
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+
+            return View("Book", model); ;
+        }
+
+        [AllowAnonymous]
+        public ActionResult CheckMail(string Email) {
+            return View("CheckEmail", new { Email = Email });
+        }
 
         //// GET: Bookings/Details/5
         //public ActionResult Details(long? id)

@@ -9,7 +9,7 @@ function WriteToCanvas(hour, mins, days, color)
     i = 0;
     days.forEach(function (d)
     {
-        if (d == 1) {
+        if (d === 1) {
             var startX = i * 50;
             var lenX = 50;
             var startY = hour;
@@ -34,7 +34,7 @@ function Lines() {
     var startElem = document.getElementById("schedStart");
     var endElem   = document.getElementById("schedEnd");
 
-    if (startElem != undefined && endElem != undefined) {
+    if (startElem !== undefined && endElem !== undefined) {
         var dayStart = parseInt(startElem.textContent) * 10;
         var dayEnd = parseInt(endElem.textContent) * 10;
 
@@ -60,13 +60,13 @@ function ReadWeekDays() {
     var Su = document.getElementById("Su");
    
     return [
-        Ma.checked == true ? 1 : 0,
-        Ti.checked == true ? 1 : 0,
-        Ke.checked == true ? 1 : 0,
-        To.checked == true ? 1 : 0,
-        Pe.checked == true ? 1 : 0,
-        La.checked == true ? 1 : 0,
-        Su.checked == true ? 1 : 0,
+        Ma.checked === true ? 1 : 0,
+        Ti.checked === true ? 1 : 0,
+        Ke.checked === true ? 1 : 0,
+        To.checked === true ? 1 : 0,
+        Pe.checked === true ? 1 : 0,
+        La.checked === true ? 1 : 0,
+        Su.checked === true ? 1 : 0,
     ];
 }
 
@@ -107,13 +107,13 @@ function readTSMap()
 
 function binaryDowToBoolList(bVal) {
     return [
-        (bVal & 1)  != 0,
-        (bVal & 2)  != 0,
-        (bVal & 4)  != 0,
-        (bVal & 8)  != 0,
-        (bVal & 16) != 0,
-        (bVal & 32) != 0,
-        (bVal & 64) != 0,
+        (bVal & 1)  !== 0,
+        (bVal & 2)  !== 0,
+        (bVal & 4)  !== 0,
+        (bVal & 8)  !== 0,
+        (bVal & 16) !== 0,
+        (bVal & 32) !== 0,
+        (bVal & 64) !== 0,
     ];
 }
 

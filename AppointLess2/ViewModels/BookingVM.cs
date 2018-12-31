@@ -13,6 +13,9 @@ namespace AppointLess2.ViewModels
     /// </summary>
     public class BookingVM
     {
+        //[Key]
+        //public long Id { get; set; }
+
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Sähköposti osoite", Prompt = "name@gmail.com")]
         [Required(ErrorMessage = "Sähköpostiosoite tarvitaan")]
@@ -20,19 +23,20 @@ namespace AppointLess2.ViewModels
 
         [Display(Name = "Nimi")]
         [Required(ErrorMessage = "Nimi tarvitaan")]
-        public string Name { get; set; }
+        public string BookerName { get; set; }
 
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Puhelin numero")]
+        //[Required(ErrorMessage = "Puhelinnumero tarvitaan")]
         public string PhoneNumber { get; set; }
 
         public string EventDate     { get; set; }
-        public string EventTime     { get; set; }
-        public string WeekStartYear { get; set; }
+        //public string EventTime     { get; set; }
+        //public string WeekStartYear { get; set; }
 
-
-        public int    ScheduleId { get; set; }
-        public int    TimeSlotId { get; set; }
+        //public int    ScheduleId { get; set; }
+        public long   TimeSlotId { get; set; }
+        public TimeSlot TimeSlot { get; set; }
     }
 
     /// <summary>

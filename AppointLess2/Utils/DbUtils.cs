@@ -20,10 +20,10 @@ namespace AppointLess2.Utils
                 //Time          = 
                 //LengthMinutes = model.
                 Email         = model.Email,
-                Name          = model.Name,
+                Name          = model.BookerName,
                 Phone         = model.PhoneNumber,
                 Status        = 0,
-                ScheduleID    = model.ScheduleId,
+                //ScheduleID    = model.ScheduleId,
                 TimeSlotID    = model.TimeSlotId
             };
         }

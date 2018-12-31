@@ -26,9 +26,9 @@ namespace AppointLess2
         }
     
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<Schedule> Schedules { get; set; }
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
         public virtual DbSet<Holiday> Holidays { get; set; }
+        public virtual DbSet<Booking> Bookings { get; set; }
     }
 }
