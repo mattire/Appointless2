@@ -173,7 +173,6 @@ namespace AppointLess2.Controllers
             return View("Message");
         }
 
-
         //// GET: Bookings/Details/5
         //public ActionResult Details(long? id)
         //{

@@ -48,6 +48,7 @@ namespace AppointLess2.ViewModels
         public List<Holiday> PersonalHolidays { get; set; }
         public List<DateTime> WeekDays        { get; set; }
         public List<DateTime> Holidays        { get; set; }
+        public List<int>      HolidaysInt     { get; set; }
         //public IEnumerable<Booking> Bookings  { get; }
         public Schedule Schedule              { get; set; }
 
@@ -80,6 +81,8 @@ namespace AppointLess2.ViewModels
             Schedule = schedule;
             WeekDays = Enumerable.Range(0, 7).Select(i => wkStart.AddDays(i)).ToList();
             Holidays = GetHolidays(WeekDays.First(), WeekDays.Last());
+            HolidaysInt = Holidays.Select(
+                h => ((int)h.DayOfWeek) == 0 ? 7 : (int)h.DayOfWeek).ToList();
             //Bookings = schedule.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
 
             if (intMode)

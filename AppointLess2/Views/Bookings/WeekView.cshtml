@@ -30,26 +30,24 @@
     foreach (var tsWIBs in Model.TimeSlotWeekIntBookingsMap)
     {
         // hour, min lenMin, bookingDays, confirmedBkngDays, tsDaysOfWeek, timeSlotId
-<span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1.Item1,@tsWIBs.Value.Item1.Item2,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
+        <span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1.Item1,@tsWIBs.Value.Item1.Item2,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
     }
-
 
     int startHour = Model.Schedule.StartOfDay ?? 0;
     int endHour = Model.Schedule.EndOfDay ?? 24;
 
+    foreach (var h in Model.HolidaysInt)
+    {
+        <span class="holiday" style="display:none">@h</span>
+    }
 
-    //var weekBookings = Model.Schedule.TimeSlots.SelectMany(
-    //    ts => ts.Bookings
-    //                .Where(b => b.Time >= Model.WeekDays.First() &&
-    //                            b.Time <= Model.WeekDays.Last()));
-    //foreach (var bkng in weekBookings)
-    //{
-    //    // change sunday to 7
-    //    var dayOW = bkng.Time.DayOfWeek == 0 ? 7 : (int)bkng.Time.DayOfWeek;
-    //
-    //    @*<span class="booking" style="display:none">@bkng.TimeSlotID,@dayOW,@bkng.Id</span>*@
-    //    <span class="booking" style="display:none">@bkng.TimeSlotID,@dayOW</span>
-    //}
+    int cd = -1;
+    if (Model.WeekDays.First() <= Model.Current) {
+        cd = ((int)Model.Current.DayOfWeek==0)?7 : (int)Model.Current.DayOfWeek;
+    }
+    <span id="currentDay"
+            style="display:none">@cd</span>
+
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -97,7 +95,7 @@
         @Html.ValidationSummary()
 
         <label id="dateAndTime"
-               style="padding:10px 10px 10px 10px; white-space: pre-wrap"></label><br />
+               style="padding:10px 10px 10px 10px; font-size:large; white-space: pre-wrap"></label><br />
         @Html.HiddenFor(m => m.Booking.EventDate)
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
 
@@ -159,7 +157,7 @@
     function WriteDTBlock(dtBlock, color, tsId, allowClick) {
         //var borderStyle = "thin solid #000000";
         var borderStyle = "2px solid #000000";
-        console.log(dtBlock);
+        //console.log(dtBlock);
         var dtElems = dtBlock.map(function (dt) { return document.getElementById(dt); });
         var arr = Array.prototype.slice.call(dtElems);
         var first = arr[0];
@@ -175,7 +173,7 @@
             if (allowClick) {
                 elem.addEventListener("click", function () { HandleClick(tsId, elem); }, false);
             }
-            
+
         });
     }
 
@@ -183,8 +181,9 @@
         return tdStr.slice(2, 3);
     }
 
-    function WriteTsToTable(tsStr) {
+    function WriteTsToTable(tsStr, currentDay) {
         //tsStr = tsStr.replace(/\r?\n|\r/g, '');
+        console.log(tsStr);
         var spl = tsStr.split(",");
 
         var hour = spl[0];
@@ -198,30 +197,27 @@
         var dnums = DaysToNums(days);
         var dbooks = DaysToNums(books);
         var dcbooks = DaysToNums(conBooks);
-        //console.log("*__*");
-        //console.log(dnums);
-        //console.log(dbooks);
-        //console.log("*--*");
         var hourMins = ToHourMins(hour, min, lenMins);
         var dtBlocks = ToDtBlocks(hourMins, dnums) //, dbooks, dcbooks)
 
         for (var i in dtBlocks) {
             var dtBlock = dtBlocks[i];
-            // check if free
-            //console.log("===================");
-            //console.log(DayNumFromDtStr(dtBlock[0]));
-            //console.log(dbooks);
-            
+
             var dayNum = parseInt(DayNumFromDtStr(dtBlock[0]));
-             
-            if (!dbooks.includes(dayNum)) {
-                WriteDTBlock(dtBlock, '#77ccff', tsId, true);
-            }
-            else {
-                if (!dcbooks.includes(dayNum)) {
-                    WriteDTBlock(dtBlock, '#ffcc77', tsId, false);
-                } else {
-                    WriteDTBlock(dtBlock, '#ff7711', tsId, false);
+
+            console.log("===================");
+            console.log(dayNum);
+            console.log(currentDay);
+            if (dayNum > currentDay) {
+                if (!dbooks.includes(dayNum)) {
+                    WriteDTBlock(dtBlock, '#77ccff', tsId, true);
+                }
+                else {
+                    if (!dcbooks.includes(dayNum)) {
+                        WriteDTBlock(dtBlock, '#ffcc77', tsId, false);
+                    } else {
+                        WriteDTBlock(dtBlock, '#ff7711', tsId, false);
+                    }
                 }
             }
         }
@@ -232,7 +228,7 @@
 
     function ToMonthAndDay(dayOfWeek)
     {
-        console.log(dayOfWeek);
+        //console.log(dayOfWeek);
         dayOfWeek = dayOfWeek == 7 ? 0 : dayOfWeek;
         var key = 'th-' + dayOfWeek;
         var th = document.getElementById(key);
@@ -268,8 +264,8 @@
         //console.log($('#tableContainer').position.left);
         //console.log($('#tableContainer').width());
         var eiWidth = $('#EventInput').width();
-        console.log(eiWidth);
-        console.log(event.clientX);
+        //console.log(eiWidth);
+        //console.log(event.clientX);
         eiWidth = eiWidth > 400 ? 300 : eiWidth;
         //
         //console.log(window.width);
@@ -295,7 +291,7 @@
             var spl = splits[i];
             WeekTimeSlots.push({ key: spl[6], value: spl });
         }
-        console.log("**");
+        //console.log("**");
         //console.log(WeekTimeSlots);
     }
 
@@ -308,21 +304,41 @@
         return d;
     }
 
+    function WriteHolidaysToTable(holidayNums) {
+        for (var i = 0; i < holidayNums.length; i++) {
+            var hn = holidayNums[i];
+            var select = "[id*='td" + hn + "-']";
+            var elems = document.querySelectorAll(select);
+            for (var i2 in elems) {
+                var e = elems[i2];
+                if (e.style !== undefined) {
+                    e.style.backgroundColor = '#ff0000';
+                }
+            }
+        }
+    }
+
     $(document).ready(function () {
         //var dst = @Model.Schedule.StartOfDay;
         //var det = @Model.Schedule.EndOfDay;
         var timeSlots = document.getElementsByClassName("timeslot");
-        //var bookings = document.getElementsByClassName("booking");
+        var holidays = document.getElementsByClassName("holiday");
+        var currentDay = document.getElementById("currentDay");
         var timeSlotArr = Array.prototype.slice.call(timeSlots);
-        //var bookingArr = Array.prototype.slice.call(bookings);
+        var holidayArr = Array.prototype.slice.call(holidays);
         var contentsLst = timeSlotArr.map(function (a) { return a.textContent; });
-        //var contentsLst2 = bookingArr.map(function (a) { return a.textContent; });
-        //var d = ToDict(contentsLst2);
+        var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
+        var cd = parseInt(currentDay.textContent);
+        console.log("holidays");
+        console.log(holidaysTxts);
+
         InitWeekTimeSlots(contentsLst);
+        WriteHolidaysToTable(holidaysTxts);
 
         //console.log(contentsLst);
         for (var i in contentsLst) {
-            WriteTsToTable(contentsLst[i]);
+            
+            WriteTsToTable(contentsLst[i], cd);
         }
     });
 
