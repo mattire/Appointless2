@@ -48,6 +48,7 @@
     <span id="currentDay"
             style="display:none">@cd</span>
 
+    <span id="personalHolidays" style="display:none">@String.Join(",", Model.PersonalInt.ToList())</span> 
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -181,7 +182,7 @@
         return tdStr.slice(2, 3);
     }
 
-    function WriteTsToTable(tsStr, currentDay) {
+    function WriteTsToTable(tsStr, currentDay, pholidays) {
         //tsStr = tsStr.replace(/\r?\n|\r/g, '');
         console.log(tsStr);
         var spl = tsStr.split(",");
@@ -208,7 +209,11 @@
             console.log("===================");
             console.log(dayNum);
             console.log(currentDay);
-            if (dayNum > currentDay) {
+            console.log(pholidays);
+            //if (dayNum > currentDay && !(dayNum in pholidays))
+            if (dayNum > currentDay && $.inArray(dayNum, pholidays)==-1)
+            {
+
                 if (!dbooks.includes(dayNum)) {
                     WriteDTBlock(dtBlock, '#77ccff', tsId, true);
                 }
@@ -324,6 +329,11 @@
         var timeSlots = document.getElementsByClassName("timeslot");
         var holidays = document.getElementsByClassName("holiday");
         var currentDay = document.getElementById("currentDay");
+        var pholidays = document
+            .getElementById("personalHolidays")
+            .textContent
+            .split(',').map(function (a) { return parseInt(a); });
+        
         var timeSlotArr = Array.prototype.slice.call(timeSlots);
         var holidayArr = Array.prototype.slice.call(holidays);
         var contentsLst = timeSlotArr.map(function (a) { return a.textContent; });
@@ -337,8 +347,8 @@
 
         //console.log(contentsLst);
         for (var i in contentsLst) {
-            
-            WriteTsToTable(contentsLst[i], cd);
+
+            WriteTsToTable(contentsLst[i], cd, pholidays);
         }
     });
 

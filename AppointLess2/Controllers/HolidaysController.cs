@@ -52,8 +52,10 @@ namespace AppointLess2.Controllers
         {
             if (ModelState.IsValid)
             {
+                //holiday.UserID = User.Identity;
                 db.Holidays.Add(holiday);
                 db.SaveChanges();
+                ;
                 return RedirectToAction("Index");
             }
 

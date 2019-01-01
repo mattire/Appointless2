@@ -49,6 +49,7 @@ namespace AppointLess2.ViewModels
         public List<DateTime> WeekDays        { get; set; }
         public List<DateTime> Holidays        { get; set; }
         public List<int>      HolidaysInt     { get; set; }
+        public List<int>      PersonalInt     { get; set; }
         //public IEnumerable<Booking> Bookings  { get; }
         public Schedule Schedule              { get; set; }
 
@@ -76,11 +77,34 @@ namespace AppointLess2.ViewModels
             return "";
         }
 
+        private void GetPersonalHolidayWeekDays() {
+            List<int> wDays = new List<int>();
+            foreach (var ph in PersonalHolidays)
+            {
+                var phWeekDays = WeekDays.Where(d => d >= ph.startDate && d <= ph.endDate);
+                var wdInts = phWeekDays.Select(p => p.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)p.DayOfWeek);
+                foreach (var wd in wdInts)
+                {
+                    if (!wDays.Contains(wd)) { wDays.Add(wd); }
+                }
+            }
+            PersonalInt = wDays;
+        }
+
         public BookingWeekVM(Schedule schedule, DateTime wkStart, bool intMode = true)
         {
             Schedule = schedule;
             WeekDays = Enumerable.Range(0, 7).Select(i => wkStart.AddDays(i)).ToList();
             Holidays = GetHolidays(WeekDays.First(), WeekDays.Last());
+
+            // Check overlapping with users holidasys
+            PersonalHolidays = schedule.AspNetUser
+                .Holidays.Where(h=>h.startDate < WeekDays.Last() &&
+                                   WeekDays.First() < h.endDate).ToList();
+             GetPersonalHolidayWeekDays();
+
+
+            // National holidays
             HolidaysInt = Holidays.Select(
                 h => ((int)h.DayOfWeek) == 0 ? 7 : (int)h.DayOfWeek).ToList();
             //Bookings = schedule.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
