@@ -85,8 +85,10 @@ namespace AppointLess2.ViewModels
             {
                 TimeSlotWeekIntBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
                 {
-                    var weekBookings = ts.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
-                    IEnumerable<int> daysToInts = weekBookings.Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek)-1);
+                    var weekBookings = ts.Bookings
+                                           .Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
+                    IEnumerable<int> daysToInts = weekBookings
+                                            .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek)-1);
                     int res = 0;
                     foreach (var di in daysToInts) {
                         res = res | (int)Math.Pow(2, di);

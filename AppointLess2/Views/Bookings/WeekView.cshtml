@@ -29,6 +29,7 @@
     // Write Bookings and Days for each timeslot (in int format) for javascript to read
     foreach (var tsWIBs in Model.TimeSlotWeekIntBookingsMap)
     {
+        // hour, min lenMin, bookingDays, tsDaysOfWeek, timeSlotId
         <span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
     }
 
@@ -37,7 +38,18 @@
     int endHour = Model.Schedule.EndOfDay ?? 24;
 
 
-    var bookings = Model.Schedule.TimeSlots.SelectMany(ts => ts.Bookings);
+    //var weekBookings = Model.Schedule.TimeSlots.SelectMany(
+    //    ts => ts.Bookings
+    //                .Where(b => b.Time >= Model.WeekDays.First() &&
+    //                            b.Time <= Model.WeekDays.Last()));
+    //foreach (var bkng in weekBookings)
+    //{
+    //    // change sunday to 7
+    //    var dayOW = bkng.Time.DayOfWeek == 0 ? 7 : (int)bkng.Time.DayOfWeek;
+    //
+    //    @*<span class="booking" style="display:none">@bkng.TimeSlotID,@dayOW,@bkng.Id</span>*@
+    //    <span class="booking" style="display:none">@bkng.TimeSlotID,@dayOW</span>
+    //}
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -84,7 +96,7 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
-        <label id="dateAndTime" 
+        <label id="dateAndTime"
                style="padding:10px 10px 10px 10px; white-space: pre-wrap"></label><br />
         @Html.HiddenFor(m => m.Booking.EventDate)
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
@@ -181,12 +193,28 @@
 
         var dnums = DaysToNums(days);
         var dbooks = DaysToNums(books);
+        //console.log("*__*");
+        //console.log(dnums);
+        //console.log(dbooks);
+        //console.log("*--*");
         var hourMins = ToHourMins(hour, min, lenMins);
-        var dtBlocks = ToDtBlocks(hourMins, dnums)
+        var dtBlocks = ToDtBlocks(hourMins, dnums, dbooks)
 
         for (var i in dtBlocks) {
             var dtBlock = dtBlocks[i];
-            WriteDTBlock(dtBlock, '#77ccff', tsId);
+            // check if free
+            //console.log("===================");
+            //console.log(DayNumFromDtStr(dtBlock[0]));
+            //console.log(dbooks);
+            
+            var dayNum = parseInt(DayNumFromDtStr(dtBlock[0]));
+             
+            if (!dbooks.includes(dayNum)) {
+                WriteDTBlock(dtBlock, '#77ccff', tsId);
+            }
+            else {
+                WriteDTBlock(dtBlock, '#ffcc77', tsId);
+            }
         }
 
     }
@@ -199,7 +227,7 @@
         dayOfWeek = dayOfWeek == 7 ? 0 : dayOfWeek;
         var key = 'th-' + dayOfWeek;
         var th = document.getElementById(key);
-        
+
         return [th.innerText, th.dataset.dateText];
     }
 
@@ -209,7 +237,7 @@
         var spl = pair.value;
         var time = spl[0] + ":" + MinsToString(spl[1]) + " len: " + spl[2];
         //var evInpWidth = $('#EventInput').clientWidth;
-        
+
         var time = spl[0] + ":" + MinsToString(spl[1]);
         var dayOfWeek = parseInt(elem.id.split('-')[0].slice(2));
         var tup = ToMonthAndDay(dayOfWeek);
@@ -224,7 +252,7 @@
         var bookingED = document.getElementById("Booking_EventDate");
         elemSlotId.value = tsId;
         bookingED.value = dateString;
-        
+
 
         //var evInpWidth = document.getElementById("EventInput").clientWidth;
         $('#EventInput').show();
@@ -259,16 +287,28 @@
             WeekTimeSlots.push({ key: spl[5], value: spl });
         }
         console.log("**");
-        console.log(WeekTimeSlots);
+        //console.log(WeekTimeSlots);
+    }
+
+    function ToDict(strArray) {
+        var d = {};
+        strArray.map(function (str) {
+            var spl = str.split(',');
+            d[spl[0]] = spl[1];
+        });
+        return d;
     }
 
     $(document).ready(function () {
         //var dst = @Model.Schedule.StartOfDay;
         //var det = @Model.Schedule.EndOfDay;
         var timeSlots = document.getElementsByClassName("timeslot");
-        var arr = Array.prototype.slice.call(timeSlots);
-        var contentsLst = arr.map(function (a) { return a.textContent; });
-
+        //var bookings = document.getElementsByClassName("booking");
+        var timeSlotArr = Array.prototype.slice.call(timeSlots);
+        //var bookingArr = Array.prototype.slice.call(bookings);
+        var contentsLst = timeSlotArr.map(function (a) { return a.textContent; });
+        //var contentsLst2 = bookingArr.map(function (a) { return a.textContent; });
+        //var d = ToDict(contentsLst2);
         InitWeekTimeSlots(contentsLst);
 
         //console.log(contentsLst);
