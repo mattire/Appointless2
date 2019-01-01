@@ -29,8 +29,8 @@
     // Write Bookings and Days for each timeslot (in int format) for javascript to read
     foreach (var tsWIBs in Model.TimeSlotWeekIntBookingsMap)
     {
-        // hour, min lenMin, bookingDays, tsDaysOfWeek, timeSlotId
-        <span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
+        // hour, min lenMin, bookingDays, confirmedBkngDays, tsDaysOfWeek, timeSlotId
+<span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1.Item1,@tsWIBs.Value.Item1.Item2,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
     }
 
 
@@ -156,7 +156,7 @@
         return (min + "").length == 1 ? "0" + min : "" + min;
     }
 
-    function WriteDTBlock(dtBlock, color, tsId) {
+    function WriteDTBlock(dtBlock, color, tsId, allowClick) {
         //var borderStyle = "thin solid #000000";
         var borderStyle = "2px solid #000000";
         console.log(dtBlock);
@@ -172,7 +172,10 @@
             elem.style.borderRight = borderStyle;
             elem.style.backgroundColor = color;
             //elem.dataset["timeSlot"] = tsId;
-            elem.addEventListener("click", function () { HandleClick(tsId, elem); }, false);
+            if (allowClick) {
+                elem.addEventListener("click", function () { HandleClick(tsId, elem); }, false);
+            }
+            
         });
     }
 
@@ -188,17 +191,19 @@
         var min = spl[1];
         var lenMins = spl[2];
         var books = spl[3];
-        var days = spl[4];
-        var tsId = spl[5];
+        var conBooks = spl[4];
+        var days = spl[5];
+        var tsId = spl[6];
 
         var dnums = DaysToNums(days);
         var dbooks = DaysToNums(books);
+        var dcbooks = DaysToNums(conBooks);
         //console.log("*__*");
         //console.log(dnums);
         //console.log(dbooks);
         //console.log("*--*");
         var hourMins = ToHourMins(hour, min, lenMins);
-        var dtBlocks = ToDtBlocks(hourMins, dnums, dbooks)
+        var dtBlocks = ToDtBlocks(hourMins, dnums) //, dbooks, dcbooks)
 
         for (var i in dtBlocks) {
             var dtBlock = dtBlocks[i];
@@ -210,10 +215,14 @@
             var dayNum = parseInt(DayNumFromDtStr(dtBlock[0]));
              
             if (!dbooks.includes(dayNum)) {
-                WriteDTBlock(dtBlock, '#77ccff', tsId);
+                WriteDTBlock(dtBlock, '#77ccff', tsId, true);
             }
             else {
-                WriteDTBlock(dtBlock, '#ffcc77', tsId);
+                if (!dcbooks.includes(dayNum)) {
+                    WriteDTBlock(dtBlock, '#ffcc77', tsId, false);
+                } else {
+                    WriteDTBlock(dtBlock, '#ff7711', tsId, false);
+                }
             }
         }
 
@@ -284,7 +293,7 @@
         var splits = contentsLst.map(function (c) { return c.split(","); });
         for (var i in splits) {
             var spl = splits[i];
-            WeekTimeSlots.push({ key: spl[5], value: spl });
+            WeekTimeSlots.push({ key: spl[6], value: spl });
         }
         console.log("**");
         //console.log(WeekTimeSlots);

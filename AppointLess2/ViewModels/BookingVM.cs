@@ -52,7 +52,8 @@ namespace AppointLess2.ViewModels
         public Schedule Schedule              { get; set; }
 
         public Dictionary<TimeSlot, Dictionary<DayOfWeek, Booking>> TimeSlotWeekBookingsMap    { get; set; }
-        public Dictionary<TimeSlot, Tuple<int?, int?>>              TimeSlotWeekIntBookingsMap { get; set; }
+        public Dictionary<TimeSlot, Tuple<Tuple<int?, int?>, int?>>              TimeSlotWeekIntBookingsMap { get; set; }
+        //public Dictionary<TimeSlot, Tuple<int?, int?>> TimeSlotWeekIntBookingsMap { get; set; }
 
         public BookingVM Booking { get; set; } = new BookingVM();
 
@@ -85,17 +86,32 @@ namespace AppointLess2.ViewModels
             {
                 TimeSlotWeekIntBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
                 {
-                    var weekBookings = ts.Bookings
-                                           .Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
-                    IEnumerable<int> daysToInts = weekBookings
+                    var weekBookings 
+                        = ts.Bookings.Where(
+                                b => b.Time >= WeekDays.First() && 
+                                b.Time <= WeekDays.Last());
+
+                    var confirmedWeekBookings 
+                            = weekBookings.Where(b => b.Status >= 1);
+
+                    IEnumerable<int> bkngsDaysToInts = weekBookings
                                             .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek)-1);
+
+                    IEnumerable<int> confBkngsDaysToInts = confirmedWeekBookings
+                                            .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek) - 1);
+
                     int res = 0;
-                    foreach (var di in daysToInts) {
+                    foreach (var di in bkngsDaysToInts) {
                         res = res | (int)Math.Pow(2, di);
                     }
-                    //return (int?)res;
+                    int res2 = 0;
+                    foreach (var di in confBkngsDaysToInts)
+                    {
+                        res2 = res2 | (int)Math.Pow(2, di);
+                    }
 
-                    return new Tuple<int?, int?>(res, ts.DaysOfWeek);
+                    return new Tuple<Tuple<int?,int?>, int?>(
+                        new Tuple<int?, int?>(res,res2), ts.DaysOfWeek);
                     //return new Tuple<int?, int?>(-1, -1);
                 });
             }

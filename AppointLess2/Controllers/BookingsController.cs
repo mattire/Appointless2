@@ -37,15 +37,11 @@ namespace AppointLess2.Controllers
         //}
 
         // GET: WeekView/5
-
         public ActionResult WeekView(int schedule)
         {
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
             var sched = db.Schedules.Find(schedule);
             ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, weekStart);
-            //var start = weekVM.WeekDays.First();
-            //var last = weekVM.WeekDays.Last();
-            //var slotBookings = sched.TimeSlots.First().Bookings.Where(b => b.Time >= start && b.Time <= last);
             return View(weekVM);
         }
 
@@ -55,9 +51,6 @@ namespace AppointLess2.Controllers
             var sched = db.Schedules.Find(Schedule);
             var next = dt.AddDays(7);
             ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, next);
-            //WeekViewModel weekViewModel = new WeekViewModel(next);
-            //SetUpEvents(ref weekViewModel);
-            //return View("Index", weekViewModel);
             return View("WeekView", weekVM);
         }
 
@@ -67,9 +60,6 @@ namespace AppointLess2.Controllers
             var sched = db.Schedules.Find(Schedule);
             var previous = dt.AddDays(-7);
             ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, previous);
-            //WeekViewModel weekViewModel = new WeekViewModel(previous);
-            //SetUpEvents(ref weekViewModel);
-            //return View("Index", weekViewModel);
             return View("WeekView", weekVM);
         }
 
