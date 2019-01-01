@@ -73,7 +73,7 @@ namespace AppointLess2.Controllers
             return View("WeekView", weekVM);
         }
 
-        // GET: Bookings/Create
+        // GET: Bookings/CreateBooking1
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -126,10 +126,63 @@ namespace AppointLess2.Controllers
             return View("Book", model); ;
         }
 
+
+        // Confirmation, Cancellation
         [AllowAnonymous]
-        public ActionResult CheckMail(string Email) {
-            return View("CheckEmail", new { Email = Email });
+        // GET: /Booking/ClientManage?strGuid=8aad565a-7226-4365-a123-92fed8ce45d1"
+        [HttpGet]
+        public ActionResult ClientManage(string strGuid)
+        {
+            Guid guid;
+            Booking bkng = null;
+            if (Guid.TryParse(strGuid, out guid))
+            {
+                bkng = db.Bookings.FirstOrDefault(c => c.UUID == guid);
+                return View("ClientManage", bkng);
+            }
+            ViewBag.Message = "Varausta ei löytynyt";
+            return View("Message");
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirm() {
+            int bkngId = int.Parse(Request.Form["Id"]);
+            var bkng = db.Bookings.Find(bkngId);
+            if (bkng != null)
+            {
+                bkng.Status = 1;
+                db.SaveChanges();
+                //ViewBag.Message = "Varaus vahvistettu";
+                //return View("Message");
+                return RedirectToAction(
+                        "ClientManage",
+                        new { strGuid = bkng.UUID });
+            }
+            else {
+                ViewBag.Message = "Varausta ei löytynyt";
+                return View("Message");
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult Cancel()
+        {
+            int bkngId = int.Parse(Request.Form["Id"]);
+            var bkng = db.Bookings.Find(bkngId);
+            if (bkng != null) {
+                db.Bookings.Remove(bkng);
+                db.SaveChanges();
+                ViewBag.Message = "Varaus poistettu";
+                return View("Message");
+            }
+            ViewBag.Message = "Varausta ei löytynyt";
+            return View("Message");
+        }
+
 
         //// GET: Bookings/Details/5
         //public ActionResult Details(long? id)

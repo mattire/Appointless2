@@ -1,0 +1,54 @@
+﻿@model AppointLess2.Booking
+
+@{
+    ViewBag.Title = "ClientManage";
+}
+
+<h1>Varauksen hallinta</h1>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.UUID)
+    @Html.HiddenFor(model => model.Id)
+
+<div class="form-horizontal">
+    @{
+
+        if (Model.Status == 0)
+        {
+            <h2>Vahvistamaton ajanvaraus</h2>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    @*<input type="submit" value="Create" class="btn btn-default" />*@
+                    <input type="submit" value="Vahvista" name="answer" style="font-size:medium; margin-bottom:10px"
+                           formaction=@Url.Action("Confirm") formmethod="post" class="btn btn-primary" /><br />
+                </div>
+            </div>
+        }
+        else
+        {
+            <h2>Ajanvaraus on vahvistettu</h2>
+        }
+
+        if (Model.Status < 2)
+        {
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    @*<input type="submit" value="Create" class="btn btn-default" />*@
+                    <input type="submit" value="Peruuta" name="answer" style="font-size:medium; margin-bottom:10px"
+                           formaction=@Url.Action("Cancel") formmethod="post" class="btn btn-primary" /><br />
+                </div>
+            </div>
+        }
+        else
+        {
+            <h2>Vahvistettu ajanvaraus (et voi enää perua, webbisivun kautta)</h2>
+        }
+    }
+</div>
+}
+
+
+

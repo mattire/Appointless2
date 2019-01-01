@@ -361,6 +361,8 @@
     <Content Include="Views\Bookings\WeekView.cshtml" />
     <Content Include="Views\Bookings\Book.cshtml" />
     <Content Include="Views\Bookings\CheckEmail.cshtml" />
+    <Content Include="Views\Bookings\ClientManage.cshtml" />
+    <Content Include="Views\Bookings\Message.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
