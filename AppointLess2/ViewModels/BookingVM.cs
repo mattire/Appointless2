@@ -8,6 +8,12 @@ using System.Web;
 
 namespace AppointLess2.ViewModels
 {
+    public enum BookingViewMode
+    {
+        Customer,
+        Admin
+    }
+
     /// <summary>
     /// Booking User info
     /// </summary>
@@ -15,6 +21,7 @@ namespace AppointLess2.ViewModels
     {
         //[Key]
         //public long Id { get; set; }
+
 
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Sähköposti osoite", Prompt = "name@gmail.com")]
@@ -50,11 +57,13 @@ namespace AppointLess2.ViewModels
         public List<DateTime> Holidays        { get; set; }
         public List<int>      HolidaysInt     { get; set; }
         public List<int>      PersonalInt     { get; set; }
+        public BookingViewMode Mode { get; }
+
         //public IEnumerable<Booking> Bookings  { get; }
         public Schedule Schedule              { get; set; }
 
         public Dictionary<TimeSlot, Dictionary<DayOfWeek, Booking>> TimeSlotWeekBookingsMap    { get; set; }
-        public Dictionary<TimeSlot, Tuple<Tuple<int?, int?>, int?>>              TimeSlotWeekIntBookingsMap { get; set; }
+        public Dictionary<TimeSlot, Tuple<Tuple<int?, int?>, int?>> TimeSlotWeekIntBookingsMap { get; set; }
         //public Dictionary<TimeSlot, Tuple<int?, int?>> TimeSlotWeekIntBookingsMap { get; set; }
 
         public BookingVM Booking { get; set; } = new BookingVM();
@@ -91,8 +100,9 @@ namespace AppointLess2.ViewModels
             PersonalInt = wDays;
         }
 
-        public BookingWeekVM(Schedule schedule, DateTime wkStart, bool intMode = true)
+        public BookingWeekVM(Schedule schedule, DateTime wkStart, BookingViewMode mode = BookingViewMode.Customer)
         {
+            Mode = mode;
             Schedule = schedule;
             WeekDays = Enumerable.Range(0, 7).Select(i => wkStart.AddDays(i)).ToList();
             Holidays = GetHolidays(WeekDays.First(), WeekDays.Last());
@@ -109,8 +119,6 @@ namespace AppointLess2.ViewModels
                 h => ((int)h.DayOfWeek) == 0 ? 7 : (int)h.DayOfWeek).ToList();
             //Bookings = schedule.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
 
-            if (intMode)
-            {
                 TimeSlotWeekIntBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
                 {
                     var weekBookings 
@@ -141,16 +149,7 @@ namespace AppointLess2.ViewModels
                         new Tuple<int?, int?>(res,res2), ts.DaysOfWeek);
                     //return new Tuple<int?, int?>(-1, -1);
                 });
-            }
-            else
-	        {
-                TimeSlotWeekBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
-                {
-                    var weekBookings = ts.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
-                    return weekBookings.ToDictionary(wb => wb.Time.DayOfWeek, wb => wb);
-                    //return new Dictionary<DayOfWeek, Booking>();
-                });
-            }
+            
         }
 
         private List<DateTime> GetHolidays(DateTime start, DateTime end)

@@ -33,9 +33,11 @@
     </td>*@
             <td>
                 @*@Html.ActionLink("Edit", "Edit", "Schedules", new { id = item.Id }, null) |
-                @Html.ActionLink("Details", "Details", "Schedules", new { id = item.Id }, null) |*@
+        @Html.ActionLink("Details", "Details", "Schedules", new { id = item.Id }, null) |*@
                 @Html.ActionLink("Poista", "Delete", "Schedules", new { id = item.Id }, null) |
-                @Html.ActionLink("Muokkaa", "Edit", "ScheduleBuilder", new { id = item.Id }, null) 
+                @Html.ActionLink("Muokkaa", "Edit", "ScheduleBuilder", new { id = item.Id }, null) |
+                @*@Html.ActionLink("Varausnäkymä", "WeekViewAdmin", "Bookings", new { schedule = item.Id }, null)*@
+                @Html.ActionLink("Varausnäkymä", "WeekViewAdmin", "BookingsAdmin", new { schedule = item.Id }, null)
             </td>
     </tr>
     }

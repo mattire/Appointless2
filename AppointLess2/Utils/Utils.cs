@@ -16,6 +16,34 @@ namespace AppointLess2.Utils
             //return DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek)).AddDays(1);
         }
 
+        public static int WeekDayToIntStartingFromMonday(DateTime dt) {
+            if (dt.DayOfWeek == DayOfWeek.Sunday) { return 7; }
+            return (int)dt.DayOfWeek;
+        }
+
+        public static string Booking2Str(Booking bkng) {
+            string statString;
+            switch (bkng.Status)
+            {
+                case 0:
+                    statString = "Vahvistamaton";
+                    break;
+                case 1:
+                    statString = "Vahvistettu";
+                    break;
+                case 2:
+                default:
+                    statString = "Määrittämätön";
+                    break;
+            }
+            return string.Join(":", new List<string>() { bkng.Name, bkng.Email, bkng.Phone, statString });
+        }
+
+        public static string Booking2StringKey(Booking bkng) {
+            var day = WeekDayToIntStartingFromMonday(bkng.Time);
+            return day + ":" + bkng.TimeSlot.TimeOfDay.Hours + ":" + bkng.TimeSlot.TimeOfDay.Minutes + ":" + bkng.TimeSlot.LengthMinutes;
+        }
+
         public static DateTime FromString(String str) {
             return DateTime.ParseExact(str, "yyyy.MM.dd", CultureInfo.InvariantCulture);
         }

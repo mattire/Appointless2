@@ -49,6 +49,29 @@
             style="display:none">@cd</span>
 
     <span id="personalHolidays" style="display:none">@String.Join(",", Model.PersonalInt.ToList())</span> 
+
+
+    if (Model.Mode== AppointLess2.ViewModels.BookingViewMode.Admin)
+    {
+        //Dictionary<string, string> bookingStrs = new Dictionary<string, string>();
+        string jRep = "var jsBookings = {";
+
+        foreach (var ts in Model.TimeSlotWeekIntBookingsMap.Keys)
+        {
+            // get ts bkngs in selected week
+            var bkngs = ts.Bookings.Where(b => b.Time >= Model.WeekDays.First() && b.Time <= Model.WeekDays.Last());
+            foreach (var bkng in bkngs)
+            {
+                var key = AppointLess2.Utils.Utils.Booking2StringKey(bkng);
+                var str = AppointLess2.Utils.Utils.Booking2Str(bkng);
+                //bookingStrs.Add(key, str);
+                jRep += ("'" + key  + "' : '" + str + "' ,");
+            }
+        }
+        jRep += "}";
+        <script>@jRep</script>
+
+    }
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -254,35 +277,16 @@
         var md = tup[0];
         var dateString = tup[1];
 
-        //$("#dateAndTime").text(day.textContent + " " + time);
         $("#dateAndTime").text(md + " " + time + "\n" + spl[2] + "minuuttia");
-        //$("#EventDate").text(dateString);
-        //$("#Booking_TimeSlotId").text(tsId);
         var elemSlotId = document.getElementById("Booking_TimeSlotId");
         var bookingED = document.getElementById("Booking_EventDate");
         elemSlotId.value = tsId;
         bookingED.value = dateString;
 
-
-        //var evInpWidth = document.getElementById("EventInput").clientWidth;
         $('#EventInput').show();
-        //console.log($('#tableContainer').position.left);
-        //console.log($('#tableContainer').width());
         var eiWidth = $('#EventInput').width();
-        //console.log(eiWidth);
-        //console.log(event.clientX);
         eiWidth = eiWidth > 400 ? 300 : eiWidth;
-        //
-        //console.log(window.width);
-
-        //var middle = $('#tableContainer').position().left + ($('#tableContainer').width() / 2) - ($('#EventInput').width() / 2);
-        //var middle = (window.innerWidth / 2) - ($('#EventInput').width() / 2)
-        //console.log(middle);
-        //$('#EventInput').parent().css({ position: 'relative' });
-        //$("#EventInput").css({ top: event.clientY, left: window.innerWidth / 2 - evInpWidth / 2, position: 'absolute' });
         $("#EventInput").css({ top: event.clientY + 30, left: event.clientX - eiWidth/2, position: 'absolute' });
-
-        //alert(time);
     }
 
     function HideInput() {

@@ -45,6 +45,17 @@ namespace AppointLess2.Controllers
             return View(weekVM);
         }
 
+        [Obsolete("WeekViewAdmin in Bookings controller is deprecated.")]
+        [Authorize]
+        // GET: WeekViewAdmin/5
+        public ActionResult WeekViewAdmin(int schedule)
+        {
+            var weekStart = Utils.Utils.GetStartOfCurrentWeek();
+            var sched = db.Schedules.Find(schedule);
+            ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, weekStart);
+            return View(weekVM);
+        }
+
         public ActionResult Next(int? Day, int? Month, int? Year, int? Schedule)
         {
             var dt = new DateTime((int)Year, (int)Month, (int)Day);
