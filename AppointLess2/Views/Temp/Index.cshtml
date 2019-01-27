@@ -1,0 +1,119 @@
+﻿@model AppointLess2.ViewModels.BookingWeekVM
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@*
+   +--------+
+   | TEMP   | 
+   +--------+
+*@
+
+<h2>Index</h2>
+
+<div class="jumbotron" id="tableContainer">
+    <table style="table-layout: fixed; width: 100%;">
+        <tr>
+            <td>&nbsp;     </td>
+            @{
+                foreach (var day in Model.WeekDays)
+                {
+                    int dow = (int)day.DayOfWeek;
+                    var dateStr = day.ToString("yyyy.MM.dd");
+                    <th id="th-@dow" data-date-text="@dateStr">@Model.GetDayName(day.DayOfWeek) @day.ToString("d.M")</th>
+                }
+            }
+        </tr>
+
+
+        @{
+            var startHour = (int)Model.Schedule.StartOfDay;
+            var endHour = (int)Model.Schedule.EndOfDay;
+            var quarterMins = new List
+            <string>
+                () { "00", "15", "30", "45" };
+            for (int hour = startHour; hour < endHour; hour++)
+            {
+                foreach (var mins in quarterMins)
+                {
+                    <tr>
+                        <td>@hour:@mins</td>
+                        <td id="td1-@hour:@mins"></td>
+                        <td id="td2-@hour:@mins"></td>
+                        <td id="td3-@hour:@mins"></td>
+                        <td id="td4-@hour:@mins"></td>
+                        <td id="td5-@hour:@mins"></td>
+                        <td id="td6-@hour:@mins"></td>
+                        <td id="td7-@hour:@mins"></td>
+                    </tr>
+
+
+                }
+            }
+
+            foreach (var slot in Model.Schedule.TimeSlots)
+            {
+                //slot.TimeOfDay.Hours
+
+            }
+
+        }
+    </table>
+</div>
+
+<script>
+    function DaysToNums(days) {
+        var nums = [
+            (days & 1) ? 1 : -1,
+            (days & 2) ? 2 : -1,
+            (days & 4) ? 3 : -1,
+            (days & 8) ? 4 : -1,
+            (days & 16) ? 5 : -1,
+            (days & 32) ? 6 : -1,
+            (days & 64) ? 7 : -1,
+        ];
+        return nums.filter(function (v) { return v != -1 });
+    }
+
+    function TableSlot(startHour, startMins, lengthMins, days) {
+        this.mStartHour  = startHour;
+        this.mStartMins  = startMins;
+        this.mLengthMins = lengthMins;
+        this.mDays       = days;
+    }
+
+    TableSlot.prototype.print = function () {
+        console.log(this.mStartHour);
+        console.log(this.mStartMins);
+        console.log(this.mLengthMins);
+        console.log(this.mDays);
+        console.log('--');
+        
+    }
+
+    TableSlot.prototype.WriteToTable = function () {
+        var days = DaysToNums(this.mDays);
+        //this.mDays
+        //document.getElementById
+    }
+
+    //TableSlot.prototype.
+
+    var slotList = [];
+    //var slot = new TableSlot(@Model)
+    @{ 
+        foreach (var ts in Model.Schedule.TimeSlots)
+        {
+            int hour = ts.TimeOfDay.Hours;
+            int mins = ts.TimeOfDay.Minutes;
+            int lenMins = ts.LengthMinutes;
+            int days = ts.DaysOfWeek;
+            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days));
+        }
+
+    }
+    slotList.forEach(function (slot) {
+        slot.print();
+    });
+</script>
