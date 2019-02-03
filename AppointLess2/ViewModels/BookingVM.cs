@@ -158,5 +158,39 @@ namespace AppointLess2.ViewModels
             return publicHolidays.Select(ph => ph.Date).ToList();
         }
 
+        public class BookingUIModel{
+            public int Day { get; set; }
+            public string Name { get; set; }
+            public string Email { get; set; }
+        }
+
+        public List<string> GetTimeSlotBookgingsInJson(TimeSlot ts) {
+            
+            var bkngs = ts.Bookings.Where(b => 
+                                            b.Time >= this.WeekDays.First() && 
+                                            b.Time <= this.WeekDays.Last()
+                                        );
+
+            return bkngs.Select(b =>
+            {
+                var bui = new BookingUIModel()
+                {
+                    Day = (b.Time.DayOfWeek == DayOfWeek.Sunday) ? 7 : (int)b.Time.DayOfWeek,
+                    Email = b.Email,
+                    Name = b.Name
+                };
+                return Newtonsoft.Json.JsonConvert.SerializeObject(bui);
+            }).ToList();
+
+                    //Newtonsoft.Json.JsonConvert
+                    //                    .SerializeObject(
+                    //                        b, 
+                    //                        Newtonsoft.Json.Formatting.None, 
+                    //                        new Newtonsoft.Json.JsonSerializerSettings() {
+                    //                            ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                    //                        }
+                    //                    )).ToList();
+        }
+
     }
 }

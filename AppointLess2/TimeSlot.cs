@@ -11,7 +11,8 @@ namespace AppointLess2
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.Linq;
+
     public partial class TimeSlot
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -27,7 +28,12 @@ namespace AppointLess2
         public int ScheduleID { get; set; }
     
         public virtual Schedule Schedule { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Booking> Bookings { get; set; }
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Booking> Bookings { get; }
+
+        public IEnumerable<Booking> FilterBookings(DateTime start, DateTime end)
+        {
+            return Bookings.Where(b => b.Time >= start && b.Time <= end);
+        }
     }
 }

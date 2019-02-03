@@ -17,24 +17,6 @@ namespace AppointLess2.Controllers
     {
         private Entities db = new Entities();
 
-        //// GET: Bookings/ScheduleBookingView/5
-        //public ActionResult BookingView(int id)
-        //{
-        //    var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
-        //    
-        //    return View();
-        //}
-
-        //// GET: Bookings
-        //public ActionResult Index()
-        //{
-        //    var now = DateTime.Now;
-        //    var idsAndNames = db.Schedules.Select(s => new { Id = s.Id, Name = s.Name }).ToList();
-        //    return View(idsAndNames);
-        //    
-        //    //var bookings = db.Bookings.Include(b => b.Schedule);
-        //    //return View(bookings.ToList());
-        //}
 
         // GET: WeekView/5
         public ActionResult WeekView(int schedule)

@@ -213,6 +213,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SchedulesController.cs" />
     <Compile Include="Controllers\ScheduleBuilderController.cs" />
+    <Compile Include="Controllers\TempController.cs" />
     <Compile Include="Controllers\TimeSlotsController.cs" />
     <Compile Include="DBModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -363,6 +364,8 @@
     <Content Include="Views\Bookings\CheckEmail.cshtml" />
     <Content Include="Views\Bookings\ClientManage.cshtml" />
     <Content Include="Views\Bookings\Message.cshtml" />
+    <Content Include="Views\Shared\WeekView.cshtml" />
+    <Content Include="Views\Temp\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

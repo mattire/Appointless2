@@ -2,15 +2,29 @@
 
 @{
     ViewBag.Title = "Index";
+    var NextMonday = Model.WeekDays.ElementAt(0).AddDays(7);
+    var PreviousMonday = Model.WeekDays.ElementAt(0).AddDays(-7);
 }
 
 @*
-   +--------+
-   | TEMP   | 
-   +--------+
+    +--------+
+    | TEMP   |
+    +--------+
 *@
 
 <h2>Index</h2>
+
+@if (Model.WeekDays.First() > DateTime.Now)
+{
+    @Html.ActionLink("Edellinen viikko", "Index", "Temp", new {
+    yearDotMothDotDay = PreviousMonday.ToString("yyyy.M.d"),
+}, null)
+}
+<br />
+@Html.ActionLink("Seuraava viikko", "Index", "Temp", new {
+    yearDotMothDotDay = NextMonday.ToString("yyyy.M.d"),
+}, null)
+
 
 <div class="jumbotron" id="tableContainer">
     <table style="table-layout: fixed; width: 100%;">
@@ -47,17 +61,8 @@
                         <td id="td6-@hour:@mins"></td>
                         <td id="td7-@hour:@mins"></td>
                     </tr>
-
-
                 }
             }
-
-            foreach (var slot in Model.Schedule.TimeSlots)
-            {
-                //slot.TimeOfDay.Hours
-
-            }
-
         }
     </table>
 </div>
@@ -76,44 +81,116 @@
         return nums.filter(function (v) { return v != -1 });
     }
 
-    function TableSlot(startHour, startMins, lengthMins, days) {
+    function MinsToString(min) {
+        return (min + "").length == 1 ? "0" + min : "" + min;
+    }
+
+    function range(start, end, step = 1) {
+        const len = Math.floor((end - start) / step) + 1
+        return Array(len).fill().map((_, idx) => start + (idx * step))
+    }
+
+    function ToHourMins(hour, min, len) {
+        var decStart = parseInt(hour) + parseInt(min) / 60;
+        var decDiff = len / 60;
+        var decs = range(decStart, decStart + decDiff, 0.25);
+        var arr = decs.map(function (d) { var hours = Math.floor(d); mins = (d - hours) * 60; return hours + ":" + MinsToString(mins); });
+        arr.pop();
+        return arr;
+    }
+
+
+    function TableSlot(startHour, startMins, lengthMins, days, bookings=null)
+    {
         this.mStartHour  = startHour;
         this.mStartMins  = startMins;
         this.mLengthMins = lengthMins;
         this.mDays       = days;
+        this.mCellCount  = lengthMins / 15;
+        this.mBookings   = bookings;
     }
 
-    TableSlot.prototype.print = function () {
+    TableSlot.prototype.print = function ()
+    {
         console.log(this.mStartHour);
         console.log(this.mStartMins);
         console.log(this.mLengthMins);
         console.log(this.mDays);
         console.log('--');
-        
     }
 
-    TableSlot.prototype.WriteToTable = function () {
+    TableSlot.prototype.TdBlock2Elems = function (tdLst)
+    {
+        var elemLst = [];
+        for (var i in tdLst) {
+            elemLst.push(document.getElementById(tdLst[i]));
+        }
+        return elemLst;
+    }
+
+    TableSlot.prototype.DrawTdElemBlock = function (tdElemLst, borderStyle, bgColor)
+    {
+        var first = tdElemLst[0];
+        var last = tdElemLst[tdElemLst.length - 1];
+        first.style.borderTop = borderStyle;
+        last.style.borderBottom = borderStyle;
+
+        for (var i in tdElemLst) {
+            var e = tdElemLst[i];
+            e.style.borderLeft = borderStyle;
+            e.style.borderRight = borderStyle;
+            e.style.backgroundColor = bgColor;
+        }
+    }
+
+    TableSlot.prototype.WriteToTable = function ()
+    {
         var days = DaysToNums(this.mDays);
-        //this.mDays
-        //document.getElementById
-    }
+        console.log('**');
+        console.log(days);
+        var self = this;
+        var hourMins = ToHourMins(this.mStartHour, this.mStartMins, this.mLengthMins);
 
-    //TableSlot.prototype.
+        var tdBlocks = days.map(function (d) {
+            var prefix = "td" + d;
+            return hourMins.map(function (hm) { return prefix + "-" + hm; });
+        });
+
+        var elemBlocks = tdBlocks.map(function (td) { return self.TdBlock2Elems(td); });
+
+        //var bookedDays = this.mBookings.map(function (b) { return b.Day; });
+
+        elemBlocks.map(function (eb) {
+            self.DrawTdElemBlock(eb, '2px solid #000000', '#77ccff');
+        });
+    }
 
     var slotList = [];
     //var slot = new TableSlot(@Model)
-    @{ 
+
+    @{
         foreach (var ts in Model.Schedule.TimeSlots)
         {
             int hour = ts.TimeOfDay.Hours;
             int mins = ts.TimeOfDay.Minutes;
             int lenMins = ts.LengthMinutes;
             int days = ts.DaysOfWeek;
-            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days));
-        }
 
+            var bkngs = Model.GetTimeSlotBookgingsInJson(ts);
+            @:var bookings = [];
+            foreach (var b in bkngs)
+            {
+                //@:bookings.push(@b);
+                //@:console.log("@b");
+                @:var jsonBooking = JSON.parse("@b".replace(/&quot;/g, '"'));
+                @:console.log(jsonBooking);
+                @:bookings.push(jsonBooking);
+            }
+            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings));
+        }
     }
     slotList.forEach(function (slot) {
-        slot.print();
+        //slot.print();
+        slot.WriteToTable();
     });
 </script>

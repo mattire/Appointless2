@@ -12,8 +12,12 @@ namespace AppointLess2.Utils
             return DateTime.Today.AddDays(-1 * (
                 DateTime.Today.DayOfWeek== DayOfWeek.Sunday? 7: (int)DateTime.Today.DayOfWeek)
                 ).AddDays(1);
+        }
 
-            //return DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek)).AddDays(1);
+        // Week starting from monday
+        public static DateTime WeekStartByDateTime(DateTime dt) {
+            var dayNum = WeekDayToIntStartingFromMonday(dt);
+            return dt.AddDays(1-dayNum);
         }
 
         public static int WeekDayToIntStartingFromMonday(DateTime dt) {
