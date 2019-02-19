@@ -67,7 +67,44 @@
     </table>
 </div>
 
+<div id="EventInput" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
+
+    @using (Html.BeginForm("CreateBooking1", "BookingView", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+
+        <label id="dateAndTime"
+               style="padding:10px 10px 10px 10px; font-size:large; white-space: pre-wrap"></label><br />
+        @Html.HiddenFor(m => m.Booking.EventDate)
+        @Html.HiddenFor(m => m.Booking.TimeSlotId);
+
+        <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
+               formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
+        <input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />
+
+    }
+</div>
+
+<div id="AdminBookingView" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
+    <h1>Varaus</h1>
+    <input id="adminEmail"       type="text" />      <br />
+    <input id="adminPhone"       type="text" />      <br />
+    <input id="adminDescription" type="text" /><br />
+    <input type="submit" value="Peruuta" name="answer" style="font-size:medium; margin-bottom:10px"
+           formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />
+    <input type="submit" value="Vahvista" name="answer" style="font-size:medium; margin-bottom:10px"
+           formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />
+    <input type="button" value="X" onclick="HideInput('#AdminBookingView');" style="position:absolute; top: -10px; right: -10px" />
+</div>
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+
 <script>
+
+    var Mode = Object.freeze({ "admin": 1, "client": 2 });
+
     function DaysToNums(days) {
         var nums = [
             (days & 1) ? 1 : -1,
@@ -100,7 +137,7 @@
     }
 
 
-    function TableSlot(startHour, startMins, lengthMins, days, bookings=null)
+    function TableSlot(startHour, startMins, lengthMins, days, bookings = null, mode = Mode.client)
     {
         this.mStartHour  = startHour;
         this.mStartMins  = startMins;
@@ -108,6 +145,7 @@
         this.mDays       = days;
         this.mCellCount  = lengthMins / 15;
         this.mBookings   = bookings;
+        this.mMode       = mode;
     }
 
     TableSlot.prototype.print = function ()
@@ -143,30 +181,106 @@
         }
     }
 
+    TableSlot.prototype.SetClickHandler = function (tdElemLst, clickHandler)
+    {
+        for (var i in tdElemLst) {
+            var e = tdElemLst[i];
+            e.addEventListener('click', clickHandler);
+        }
+    }
+
+
     TableSlot.prototype.WriteToTable = function ()
     {
         var days = DaysToNums(this.mDays);
-        console.log('**');
-        console.log(days);
         var self = this;
         var hourMins = ToHourMins(this.mStartHour, this.mStartMins, this.mLengthMins);
 
-        var tdBlocks = days.map(function (d) {
+        var dayTDBlocks = days.map(function (d) {
             var prefix = "td" + d;
-            return hourMins.map(function (hm) { return prefix + "-" + hm; });
+            return { day: d, hourMins: hourMins.map(function (hm) { return prefix + "-" + hm; }) };
         });
 
-        var elemBlocks = tdBlocks.map(function (td) { return self.TdBlock2Elems(td); });
+        var elemBlocks = dayTDBlocks.map(function (d_td) { return { day: d_td.day, elemBlock: self.TdBlock2Elems(d_td.hourMins) }; });
 
-        //var bookedDays = this.mBookings.map(function (b) { return b.Day; });
+        var bookedDays = this.mBookings.map(function (b) { return b.Day; });
+        var bookingMap = this.mBookings.map(function (b) { return { day: b.Day, booking:b } });
 
-        elemBlocks.map(function (eb) {
-            self.DrawTdElemBlock(eb, '2px solid #000000', '#77ccff');
+        elemBlocks.map(function (deb)
+        {
+            //console.log(bookedDays);
+            if ($.inArray(deb.day, bookedDays)) // true if not in booked days
+            {
+                self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
+                //self.SetClickHandler(deb.elemBlock, function () { alert('afaf'); });
+                self.SetClickHandler(deb.elemBlock, function ()
+                {
+                    self.UnreservedClickHandler(deb.elemBlock, event);
+                });
+            } else
+            {
+                self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#ffdd77');
+                if (self.mMode == Mode.admin) {
+                    var tup = bookingMap.find(function (t) { return t.day == deb.day; });
+                    //var booking = bookingMap[deb.day];
+                    console.log(tup.booking);
+                    self.SetClickHandler(deb.elemBlock, function () {
+                        self.AdminClickHandler(tup.booking, event);
+                    });
+                }
+            }
         });
     }
 
+    TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
+        console.log(ev);
+        $('#EventInput').show();
+        //var firstElem = elemBllock[0];
+        var eiWidth = $('#EventInput').width();
+        eiWidth = eiWidth > 400 ? 300 : eiWidth;
+        //this.mLengthMins
+        $("#EventInput").css({ top: ev.clientY + 30, left: ev.clientX - eiWidth / 2, position: 'absolute' });
+    }
+
+    TableSlot.prototype.AdminClickHandler = function (booking, ev) {
+        console.log(this.mLengthMins);
+        console.log(booking.Name    );
+        console.log(booking.Email   );
+
+        //document.getElementById('adminEmail').value = this.mLengthMins;
+        //document.getElementById('adminEmail').value = "" + this.mLengthMins;
+        //document.getElementById('adminPhone').value = booking.Name;
+        //document.getElementById('adminDescription').value = booking.Email   ;
+
+        $('#adminEmail'      ).val("" + this.mLengthMins);
+        $('#adminPhone'      ).val(booking.Name         );
+        $('#adminDescription').val(booking.Email        );
+
+        
+        //$('#AdminBookingView').show();
+        //$('#AdminBookingView').
+        this.ShowOnClickPos('#AdminBookingView', ev);
+    }
+
+    TableSlot.prototype.ShowOnClickPos = function (uiElem, ev) {
+        $(uiElem).show();
+        var eiWidth = $(uiElem).width();
+        console.log('a');
+        eiWidth = eiWidth > 400 ? 300 : eiWidth;
+        this.mLengthMins
+        $(uiElem).css({ top: ev.clientY + 30, left: ev.clientX - eiWidth / 2, position: 'absolute' });
+    }
+
+    function HideInput(hashInp) {
+        //$('#EventInput').hide();
+        $(hashInp).hide();
+    }
+
+
     var slotList = [];
     //var slot = new TableSlot(@Model)
+
+
 
     @{
         foreach (var ts in Model.Schedule.TimeSlots)
@@ -176,17 +290,15 @@
             int lenMins = ts.LengthMinutes;
             int days = ts.DaysOfWeek;
 
-            var bkngs = Model.GetTimeSlotBookgingsInJson(ts);
+            var bkngs = Model.GetTimeSlotBookgingsInJson(ts, true);
             @:var bookings = [];
             foreach (var b in bkngs)
             {
-                //@:bookings.push(@b);
-                //@:console.log("@b");
                 @:var jsonBooking = JSON.parse("@b".replace(/&quot;/g, '"'));
                 @:console.log(jsonBooking);
                 @:bookings.push(jsonBooking);
             }
-            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings));
+            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.admin));
         }
     }
     slotList.forEach(function (slot) {

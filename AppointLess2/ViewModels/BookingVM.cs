@@ -164,7 +164,7 @@ namespace AppointLess2.ViewModels
             public string Email { get; set; }
         }
 
-        public List<string> GetTimeSlotBookgingsInJson(TimeSlot ts) {
+        public List<string> GetTimeSlotBookgingsInJson(TimeSlot ts, bool includeData = false) {
             
             var bkngs = ts.Bookings.Where(b => 
                                             b.Time >= this.WeekDays.First() && 
@@ -175,9 +175,9 @@ namespace AppointLess2.ViewModels
             {
                 var bui = new BookingUIModel()
                 {
-                    Day = (b.Time.DayOfWeek == DayOfWeek.Sunday) ? 7 : (int)b.Time.DayOfWeek,
-                    Email = b.Email,
-                    Name = b.Name
+                    Day   = (b.Time.DayOfWeek == DayOfWeek.Sunday) ? 7 : (int)b.Time.DayOfWeek,
+                    Email = includeData == true ? b.Email : "",
+                    Name  = includeData == true ? b.Name  : ""
                 };
                 return Newtonsoft.Json.JsonConvert.SerializeObject(bui);
             }).ToList();
