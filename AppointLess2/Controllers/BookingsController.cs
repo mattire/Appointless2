@@ -16,7 +16,7 @@ namespace AppointLess2.Controllers
     public class BookingsController : Controller
     {
         private Entities db = new Entities();
-
+        private static Random rnd = new Random();
 
         // GET: WeekView/5
         public ActionResult WeekView(int schedule)
@@ -70,6 +70,9 @@ namespace AppointLess2.Controllers
             vm.EventDate = eventDate;
             vm.TimeSlot = timeSlot;
             vm.TimeSlotId = timeSlot.Id;
+            
+            vm.Number1 = rnd.Next(15);
+            vm.Number2 = rnd.Next(15);
             //vm.EventTime = timeSlot.TimeOfDay
             return View("Book", vm);
         }
@@ -80,11 +83,23 @@ namespace AppointLess2.Controllers
         //public ActionResult Create(BookingWeekVM model)
         public ActionResult Create([Bind(Include = "Email, BookerName, PhoneNumber")] BookingVM model)
         {
+            int    timeSlotId = -1;
+            string eventDate  = null;
+
+            int checkRes = int.Parse(Request.Form["CheckField"]);
+            int num1 = int.Parse(Request.Form["Number1"]);
+            int num2 = int.Parse(Request.Form["Number2"]);
+
+            if (checkRes!= (num1 + num2))
+            {
+                ModelState.AddModelError("CheckField", "Väärä vastaus");
+            }
+
+            timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
+            eventDate = Request.Form["EventDate"];
+
             if (ModelState.IsValid)
             {
-                var timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
-                string eventDate = Request.Form["EventDate"];
-
                 DateTime eventDT = Utils.Utils.FromString(eventDate);
 
                 var book = new Booking()
@@ -106,6 +121,10 @@ namespace AppointLess2.Controllers
             }
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
+            model.TimeSlot = db.TimeSlots.Find(timeSlotId);
+            model.EventDate = eventDate;
+            model.Number1 = rnd.Next(100);
+            model.Number2 = rnd.Next(100);
             return View("Book", model); ;
         }
 

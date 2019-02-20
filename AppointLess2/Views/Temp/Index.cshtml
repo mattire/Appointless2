@@ -27,7 +27,7 @@
 
 
 <div class="jumbotron" id="tableContainer">
-    <table style="table-layout: fixed; width: 100%;">
+    <table style="table-layout: fixed; width: 100%;" id="WeekViewTable">
         <tr>
             <td>&nbsp;     </td>
             @{
@@ -87,10 +87,10 @@
 </div>
 
 <div id="AdminBookingView" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
-    <h1>Varaus</h1>
-    <input id="adminEmail"       type="text" />      <br />
-    <input id="adminPhone"       type="text" />      <br />
-    <input id="adminDescription" type="text" /><br />
+    <h1>Varattu aika</h1>
+    <input id="adminEmail"       type="text" style="padding-right:10px;margin:10px;"/>      <br />
+    <input id="adminPhone"       type="text" style="padding-right:10px;margin:10px;"/>      <br />
+    <input id="adminDescription" type="text" style="padding-right:10px;margin:10px;"/><br />
     <input type="submit" value="Peruuta" name="answer" style="font-size:medium; margin-bottom:10px"
            formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />
     <input type="submit" value="Vahvista" name="answer" style="font-size:medium; margin-bottom:10px"
@@ -166,12 +166,16 @@
         return elemLst;
     }
 
-    TableSlot.prototype.DrawTdElemBlock = function (tdElemLst, borderStyle, bgColor)
+    TableSlot.prototype.DrawTdElemBlock = function (tdElemLst, borderStyle, bgColor, booking = null)
     {
         var first = tdElemLst[0];
         var last = tdElemLst[tdElemLst.length - 1];
         first.style.borderTop = borderStyle;
         last.style.borderBottom = borderStyle;
+
+        if (booking != null) {
+            first.textContent = booking.Email.length > 20 ? booking.Email.substr(0, 20) : booking.Email;
+        }
 
         for (var i in tdElemLst) {
             var e = tdElemLst[i];
@@ -219,10 +223,10 @@
                 });
             } else
             {
-                self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#ffdd77');
                 if (self.mMode == Mode.admin) {
                     var tup = bookingMap.find(function (t) { return t.day == deb.day; });
                     //var booking = bookingMap[deb.day];
+                    self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#ffdd77', tup.booking);
                     console.log(tup.booking);
                     self.SetClickHandler(deb.elemBlock, function () {
                         self.AdminClickHandler(tup.booking, event);

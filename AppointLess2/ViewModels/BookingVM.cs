@@ -37,6 +37,14 @@ namespace AppointLess2.ViewModels
         //[Required(ErrorMessage = "Puhelinnumero tarvitaan")]
         public string PhoneNumber { get; set; }
 
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Ajanvarauksen aihe")]
+        public string Description { get; set; }
+
+        [DataType(DataType.Text)]
+        [Required(ErrorMessage = "Varmistus tarvitaan (bottien varalta)")]
+        public int CheckField { get; set; }
+
         public string EventDate     { get; set; }
         //public string EventTime     { get; set; }
         //public string WeekStartYear { get; set; }
@@ -44,6 +52,8 @@ namespace AppointLess2.ViewModels
         //public int    ScheduleId { get; set; }
         public long   TimeSlotId { get; set; }
         public TimeSlot TimeSlot { get; set; }
+        public int Number1 { get; set; }
+        public int Number2 { get; set; }
     }
 
     /// <summary>
