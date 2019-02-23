@@ -111,6 +111,7 @@ namespace AppointLess2.Controllers
                     TimeSlotID = timeSlotId,
                     UUID = Guid.NewGuid(),
                     Status = 0,
+                    Descrption = model.Description
                 };
                 //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
                 db.Bookings.Add(book);

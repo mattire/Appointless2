@@ -22,6 +22,7 @@ namespace AppointLess2
         public byte Status { get; set; }
         public long TimeSlotID { get; set; }
         public System.Guid UUID { get; set; }
+        public string Descrption { get; set; }
     
         public virtual TimeSlot TimeSlot { get; set; }
     }

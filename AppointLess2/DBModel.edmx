@@ -34,6 +34,7 @@
           <Property Name="Status" Type="tinyint" Nullable="false" />
           <Property Name="TimeSlotID" Type="bigint" Nullable="false" />
           <Property Name="UUID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Descrption" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Holiday">
           <Key>
@@ -264,6 +265,7 @@
           <Property Name="TimeSlotID" Type="Int64" Nullable="false" />
           <Property Name="UUID" Type="Guid" Nullable="false" />
           <NavigationProperty Name="TimeSlot" Relationship="Model.FK__Booking__TimeSlo__03F0984C" FromRole="Booking" ToRole="TimeSlot" />
+          <Property Name="Descrption" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__Booking__TimeSlo__03F0984C">
           <End Type="Model.TimeSlot" Role="TimeSlot" Multiplicity="1" />
@@ -336,6 +338,7 @@
           <EntitySetMapping Name="Bookings">
             <EntityTypeMapping TypeName="Model.Booking">
               <MappingFragment StoreEntitySet="Booking">
+                <ScalarProperty Name="Descrption" ColumnName="Descrption" />
                 <ScalarProperty Name="UUID" ColumnName="UUID" />
                 <ScalarProperty Name="TimeSlotID" ColumnName="TimeSlotID" />
                 <ScalarProperty Name="Status" ColumnName="Status" />

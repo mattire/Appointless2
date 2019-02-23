@@ -99,7 +99,8 @@
 }
 
 <div>
-    <button onclick="window.history.back();">Takaisin viikkonäkymään</button>
+    @*<button onclick="window.history.back();">Takaisin viikkonäkymään</button>*@
+    <button onclick="window.location = document.referrer;">Takaisin viikkonäkymään</button>
 
     @*@Html.ActionLink("Takaisin viikkonäkymään", "Index")*@
 </div>

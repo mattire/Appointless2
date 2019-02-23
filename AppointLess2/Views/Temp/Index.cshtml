@@ -98,6 +98,11 @@
     <input type="button" value="X" onclick="HideInput('#AdminBookingView');" style="position:absolute; top: -10px; right: -10px" />
 </div>
 
+<div id="AdminHoverBookingView" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
+    @*<h2>Aika</h2>*@
+    <label id="adminHoverData" style="padding-right:10px;margin:10px;" />      <br />
+</div>
+
 
 <script src="~/Scripts/jquery-3.3.1.js"></script>
 
@@ -185,14 +190,14 @@
         }
     }
 
-    TableSlot.prototype.SetClickHandler = function (tdElemLst, clickHandler)
+    TableSlot.prototype.SetEventHandler = function (eventStr, tdElemLst, clickHandler)
     {
         for (var i in tdElemLst) {
             var e = tdElemLst[i];
-            e.addEventListener('click', clickHandler);
+            //e.addEventListener('click', clickHandler);
+            e.addEventListener(eventStr, clickHandler);
         }
     }
-
 
     TableSlot.prototype.WriteToTable = function ()
     {
@@ -216,8 +221,8 @@
             if ($.inArray(deb.day, bookedDays)) // true if not in booked days
             {
                 self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
-                //self.SetClickHandler(deb.elemBlock, function () { alert('afaf'); });
-                self.SetClickHandler(deb.elemBlock, function ()
+                //self.SetEventHandler(deb.elemBlock, function () { alert('afaf'); });
+                self.SetEventHandler('click', deb.elemBlock, function ()
                 {
                     self.UnreservedClickHandler(deb.elemBlock, event);
                 });
@@ -228,9 +233,19 @@
                     //var booking = bookingMap[deb.day];
                     self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#ffdd77', tup.booking);
                     console.log(tup.booking);
-                    self.SetClickHandler(deb.elemBlock, function () {
+                    self.SetEventHandler('click', deb.elemBlock, function () {
                         self.AdminClickHandler(tup.booking, event);
                     });
+
+
+                    //self.SetEventHandler('mouseover', deb.elemBlock, function () {
+                    self.SetEventHandler('mouseenter', deb.elemBlock, function () {
+                        self.AdminHoverHandler(tup.booking, event, true);
+                    });
+                    self.SetEventHandler('mouseleave', deb.elemBlock, function () {
+                        self.AdminHoverHandler(tup.booking, event, false);
+                    });
+
                 }
             }
         });
@@ -251,28 +266,35 @@
         console.log(booking.Name    );
         console.log(booking.Email   );
 
-        //document.getElementById('adminEmail').value = this.mLengthMins;
-        //document.getElementById('adminEmail').value = "" + this.mLengthMins;
-        //document.getElementById('adminPhone').value = booking.Name;
-        //document.getElementById('adminDescription').value = booking.Email   ;
-
         $('#adminEmail'      ).val("" + this.mLengthMins);
         $('#adminPhone'      ).val(booking.Name         );
         $('#adminDescription').val(booking.Email        );
-
         
-        //$('#AdminBookingView').show();
-        //$('#AdminBookingView').
         this.ShowOnClickPos('#AdminBookingView', ev);
     }
 
-    TableSlot.prototype.ShowOnClickPos = function (uiElem, ev) {
+    TableSlot.prototype.AdminHoverHandler = function (booking, ev, enterleave) {
+        if (enterleave == true) {
+            var str = booking.Name + " " + booking.Email + " " + this.mLengthMins + " minuuttia";
+            $('#adminHoverData').text(str);
+            var offset = [-100, -10];
+            this.ShowOnClickPos('#AdminHoverBookingView', ev, offset);
+        } else {
+            console.log('hide');
+            $('#AdminHoverBookingView').hide();
+        }
+        
+    }
+
+    TableSlot.prototype.ShowOnClickPos = function (uiElem, ev, offset = null) {
         $(uiElem).show();
         var eiWidth = $(uiElem).width();
-        console.log('a');
         eiWidth = eiWidth > 400 ? 300 : eiWidth;
-        this.mLengthMins
-        $(uiElem).css({ top: ev.clientY + 30, left: ev.clientX - eiWidth / 2, position: 'absolute' });
+        //this.mLengthMins
+        if (offset == null) {
+            offset = [0, 0];
+        }
+        $(uiElem).css({ top: ev.clientY + 30 + offset[0], left: ev.clientX - eiWidth / 2 + offset[1], position: 'absolute' });
     }
 
     function HideInput(hashInp) {
