@@ -85,6 +85,7 @@ namespace AppointLess2.Controllers
         {
             int    timeSlotId = -1;
             string eventDate  = null;
+            string description = null;
 
             int checkRes = int.Parse(Request.Form["CheckField"]);
             int num1 = int.Parse(Request.Form["Number1"]);
@@ -97,7 +98,7 @@ namespace AppointLess2.Controllers
 
             timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
             eventDate = Request.Form["EventDate"];
-
+            description = Request.Form["Description"];
             if (ModelState.IsValid)
             {
                 DateTime eventDT = Utils.Utils.FromString(eventDate);
@@ -111,7 +112,7 @@ namespace AppointLess2.Controllers
                     TimeSlotID = timeSlotId,
                     UUID = Guid.NewGuid(),
                     Status = 0,
-                    Descrption = model.Description
+                    Descrption = description
                 };
                 //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
                 db.Bookings.Add(book);
