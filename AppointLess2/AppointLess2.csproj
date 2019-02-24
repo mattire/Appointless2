@@ -366,10 +366,11 @@
     <Content Include="Views\Bookings\Message.cshtml" />
     <Content Include="Views\Shared\WeekView.cshtml" />
     <Content Include="Views\Temp\Index.cshtml" />
+    <Content Include="Views\Shared\WeekViewAdmin.cshtml" />
+    <Content Include="Views\BookingsAdmin\Cancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\BookingsAdmin\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

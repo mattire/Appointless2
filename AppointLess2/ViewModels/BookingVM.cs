@@ -169,9 +169,12 @@ namespace AppointLess2.ViewModels
         }
 
         public class BookingUIModel{
+            public long ID { get; set; }
             public int Day { get; set; }
             public string Name { get; set; }
             public string Email { get; set; }
+            public string Description { get; set; }
+            public int Status { get; set; }
         }
 
         public List<string> GetTimeSlotBookgingsInJson(TimeSlot ts, bool includeData = false) {
@@ -180,14 +183,20 @@ namespace AppointLess2.ViewModels
                                             b.Time >= this.WeekDays.First() && 
                                             b.Time <= this.WeekDays.Last()
                                         );
+            
 
             return bkngs.Select(b =>
             {
+                //b.Status
+
                 var bui = new BookingUIModel()
                 {
+                    ID = b.Id,
                     Day   = (b.Time.DayOfWeek == DayOfWeek.Sunday) ? 7 : (int)b.Time.DayOfWeek,
                     Email = includeData == true ? b.Email : "",
-                    Name  = includeData == true ? b.Name  : ""
+                    Name  = includeData == true ? b.Name  : "",
+                    Description = includeData == true ? b.Descrption : "",
+                    Status = b.Status,
                 };
                 return Newtonsoft.Json.JsonConvert.SerializeObject(bui);
             }).ToList();

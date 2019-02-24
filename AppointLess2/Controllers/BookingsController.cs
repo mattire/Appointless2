@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -18,19 +19,27 @@ namespace AppointLess2.Controllers
         private Entities db = new Entities();
         private static Random rnd = new Random();
 
-        // GET: WeekView/5
-        public ActionResult WeekView(int schedule)
+        /*
+        // GET: Temp
+        public ActionResult Index(string yearDotMothDotDay)
         {
+            //DateTime? weekStart = null;
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
-            var sched = db.Schedules.Find(schedule);
-            ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, weekStart);
+            if (yearDotMothDotDay != null)
+            {
+                var parsed = DateTime.ParseExact(yearDotMothDotDay, "yyyy.M.d", CultureInfo.InvariantCulture);
+                weekStart = Utils.Utils.WeekStartByDateTime(parsed);
+            }
+
+            var sched = db.Schedules.Find(1);
+            ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, (DateTime)weekStart);
             return View(weekVM);
         }
+        */
 
-        [Obsolete("WeekViewAdmin in Bookings controller is deprecated.")]
-        [Authorize]
-        // GET: WeekViewAdmin/5
-        public ActionResult WeekViewAdmin(int schedule)
+
+        // GET: WeekView/5
+        public ActionResult WeekView(int schedule)
         {
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
             var sched = db.Schedules.Find(schedule);
@@ -158,8 +167,6 @@ namespace AppointLess2.Controllers
             {
                 bkng.Status = 1;
                 db.SaveChanges();
-                //ViewBag.Message = "Varaus vahvistettu";
-                //return View("Message");
                 return RedirectToAction(
                         "ClientManage",
                         new { strGuid = bkng.UUID });
@@ -186,105 +193,6 @@ namespace AppointLess2.Controllers
             ViewBag.Message = "Varausta ei löytynyt";
             return View("Message");
         }
-
-        //// GET: Bookings/Details/5
-        //public ActionResult Details(long? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Booking booking = db.Bookings.Find(id);
-        //    if (booking == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(booking);
-        //}
-
-        //// GET: Bookings/Create
-        //public ActionResult Create()
-        //{
-        //    ViewBag.ScheduleID = new SelectList(db.Schedules, "Id", "Name");
-        //    return View();
-        //}
-
-        //// POST: Bookings/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create([Bind(Include = "Id,Time,LengthMinutes,Email,Name,Phone,Status,ScheduleID")] Booking booking)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Bookings.Add(booking);
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    ViewBag.ScheduleID = new SelectList(db.Schedules, "Id", "Name", booking.ScheduleID);
-        //    return View(booking);
-        //}
-
-        //// GET: Bookings/Edit/5
-        //public ActionResult Edit(long? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Booking booking = db.Bookings.Find(id);
-        //    if (booking == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.ScheduleID = new SelectList(db.Schedules, "Id", "Name", booking.ScheduleID);
-        //    return View(booking);
-        //}
-
-        //// POST: Bookings/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "Id,Time,LengthMinutes,Email,Name,Phone,Status,ScheduleID")] Booking booking)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(booking).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    ViewBag.ScheduleID = new SelectList(db.Schedules, "Id", "Name", booking.ScheduleID);
-        //    return View(booking);
-        //}
-
-        //// GET: Bookings/Delete/5
-        //public ActionResult Delete(long? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Booking booking = db.Bookings.Find(id);
-        //    if (booking == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(booking);
-        //}
-
-        //// POST: Bookings/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult DeleteConfirmed(long id)
-        //{
-        //    Booking booking = db.Bookings.Find(id);
-        //    db.Bookings.Remove(booking);
-        //    db.SaveChanges();
-        //    return RedirectToAction("Index");
-        //}
 
         protected override void Dispose(bool disposing)
         {
