@@ -51,5 +51,15 @@ namespace AppointLess2.Utils
         public static DateTime FromString(String str) {
             return DateTime.ParseExact(str, "yyyy.MM.dd", CultureInfo.InvariantCulture);
         }
+
+        public static bool CheckBoxToBool(string cbVal)
+        {
+            if (string.Compare(cbVal, "false") == 0)
+                return false;
+            if (string.Compare(cbVal, "true,false") == 0)
+                return true;
+            else
+                throw new ArgumentNullException(cbVal);
+        }
     }
 }

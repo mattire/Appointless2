@@ -54,6 +54,7 @@
           <Property Name="UserID" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="StartOfDay" Type="int" />
           <Property Name="EndOfDay" Type="int" />
+          <Property Name="OnFrontPage" Type="bit" />
         </EntityType>
         <EntityType Name="TimeSlot">
           <Key>
@@ -193,6 +194,7 @@
           <NavigationProperty Name="TimeSlots" Relationship="Model.FK__TimeSlot__Schedu__60A75C0F" FromRole="Schedule" ToRole="TimeSlot" />
           <Property Name="StartOfDay" Type="Int32" />
           <Property Name="EndOfDay" Type="Int32" />
+          <Property Name="OnFrontPage" Type="Boolean" />
         </EntityType>
         <EntityType Name="TimeSlot">
           <Key>
@@ -306,6 +308,7 @@
           <EntitySetMapping Name="Schedules">
             <EntityTypeMapping TypeName="Model.Schedule">
               <MappingFragment StoreEntitySet="Schedule">
+                <ScalarProperty Name="OnFrontPage" ColumnName="OnFrontPage" />
                 <ScalarProperty Name="EndOfDay" ColumnName="EndOfDay" />
                 <ScalarProperty Name="StartOfDay" ColumnName="StartOfDay" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />

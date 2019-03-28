@@ -20,7 +20,11 @@ namespace AppointLess2.Controllers
                 System.Diagnostics.Debug.WriteLine("Auth");
                 scheds = DbUtils.GetUserSchedules(db, User);
             }
-            var schedIdsNames = db.Schedules.ToList().Select(s => new Tuple<int, string>(s.Id, s.Name)).AsEnumerable();
+            var schedIdsNames = db.Schedules
+                .Where(s => s.OnFrontPage == true)
+                .ToList().Select(s => new Tuple<int, string>(s.Id, s.Name)).AsEnumerable();
+
+            //var showOnFrontPage = db.Schedules.Where(s => s.OnFrontPage == true);
 
             return View(new Tuple<IQueryable<Schedule>, IEnumerable<Tuple<int, string>>>(scheds, schedIdsNames));
         }

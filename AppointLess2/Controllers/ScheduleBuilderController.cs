@@ -132,9 +132,14 @@ namespace AppointLess2.Controllers
         public ActionResult Edit(int id)
         {
             var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
-            var svm = new ScheduleVM(sched);
-            
-            return View("Builder", svm);
+            if (sched != null)
+            {
+                var svm = new ScheduleVM(sched);
+                return View("Builder", svm);
+            }
+            else {
+                return View("Builder", null);
+            }
         }
 
         // POST: SheduleBuilder/Edit/5
@@ -147,7 +152,11 @@ namespace AppointLess2.Controllers
                 var name = collection["Name"];
                 var start   = int.Parse(collection["DailyStartTime"]);
                 var end     = int.Parse(collection["DailyEndTime"]);
+                var show    = Utils.Utils.CheckBoxToBool(collection["ShowOnFrontPage"]);
+                System.Diagnostics.Debug.WriteLine(show.GetType().Name);
+                System.Diagnostics.Debug.WriteLine(show);
                 sched.Name = name;
+                sched.OnFrontPage = show;
                 if (start < end) {
                     sched.StartOfDay = start;
                     sched.EndOfDay   = end;

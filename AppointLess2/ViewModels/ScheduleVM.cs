@@ -19,6 +19,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
             UserID          = sched.UserID;
             DailyStartTime  = sched.StartOfDay;
             DailyEndTime    = sched.EndOfDay;
+            ShowOnFrontPage = sched.OnFrontPage == true? true:false;
             TimeSlotVMs     = sched.TimeSlots.Select(ts=> new TimeSlotVM(ts));
         }
 
@@ -37,6 +38,9 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
         [Range(0, 24)]
         [Display(Name = "Päivän loppu (tunti)")]
         public int? DailyEndTime { get; set; }
+
+        [Display(Name = "Näytä etusivulla")]
+        public bool ShowOnFrontPage { get; set; }
 
         [Display(Name = "Ajat")]
         public IEnumerable<TimeSlotVM> TimeSlotVMs { get; set; }

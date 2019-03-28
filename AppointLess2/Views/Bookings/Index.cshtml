@@ -5,26 +5,32 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Ajanvaraus - Valitse Varausaikataulu</h2>
+<h2>Ajanvaraus - Ajanvarauslistat</h2>
+<p>
+    Alla näet käytettävissä olevat ajanvarauslistat, clikkaa varauslistan nimeä niin näet varattavissa olevat ajat
+</p>
+@*<div class="jumbotron">
+</div>*@
 
 
-    <table class="table">
+<table class="table">
+    <tr>
+        <th>
+            Nimi
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
-            <th>
-                Nimi
-            </th>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.Schedule.Name)
+                </td>*@
+            <td>
+                @*@Html.ActionLink(item.Item2 + " -   Näytä", "WeekView", "Bookings", new { schedule = item.Item1 }, null)*@
+                @Html.ActionLink(item.Item2 + " -   Näytä", "WeekView", "Bookings", new { schedule = item.Item1 }, null)
+            </td>
         </tr>
+    }
 
-        @foreach (var item in Model)
-        {
-            <tr>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.Schedule.Name)
-                    </td>*@
-                <td>
-                    @Html.ActionLink(item.Item2, "WeekView", "Bookings", new { schedule = item.Item1 }, null)
-                </td>
-            </tr>
-        }
-
-    </table>
+</table>
