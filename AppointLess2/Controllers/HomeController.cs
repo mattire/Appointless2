@@ -15,7 +15,7 @@ namespace AppointLess2.Controllers
         public ActionResult Index()
         {
             IQueryable<Schedule> scheds = null;
-
+            if(!string.IsNullOrEmpty( User.Identity.Name))
             if (User.Identity != null) {
                 System.Diagnostics.Debug.WriteLine("Auth");
                 scheds = DbUtils.GetUserSchedules(db, User);
