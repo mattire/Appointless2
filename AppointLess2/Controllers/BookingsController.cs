@@ -37,6 +37,14 @@ namespace AppointLess2.Controllers
         }
         */
 
+        // GET: WeekView/5
+        public ActionResult BookingView(string name)
+        {
+            var weekStart = Utils.Utils.GetStartOfCurrentWeek();
+            var sched = db.Schedules.FirstOrDefault(s => s.Name == name);
+            ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, weekStart);
+            return View("WeekView", weekVM);
+        }
 
         // GET: WeekView/5
         public ActionResult WeekView(int schedule)
