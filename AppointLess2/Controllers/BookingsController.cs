@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using AppointLess2;
@@ -118,24 +119,30 @@ namespace AppointLess2.Controllers
             description = Request.Form["Description"];
             if (ModelState.IsValid)
             {
-                DateTime eventDT = Utils.Utils.FromString(eventDate);
-
-                var book = new Booking()
+                using (TransactionScope tc = new TransactionScope())
                 {
-                    Email = model.Email,
-                    Name = model.BookerName,
-                    Phone = model.PhoneNumber,
-                    Time = eventDT,
-                    TimeSlotID = timeSlotId,
-                    UUID = Guid.NewGuid(),
-                    Status = 0,
-                    Descrption = description
-                };
-                //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
-                db.Bookings.Add(book);
-                db.SaveChanges();
-                Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID);
-                ViewBag.Email = model.Email;
+                    DateTime eventDT = Utils.Utils.FromString(eventDate);
+
+                    var book = new Booking()
+                    {
+                        Email = model.Email,
+                        Name = model.BookerName,
+                        Phone = model.PhoneNumber,
+                        Time = eventDT,
+                        TimeSlotID = timeSlotId,
+                        UUID = Guid.NewGuid(),
+                        Status = 0,
+                        Descrption = description
+                    };
+                    //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
+                    db.Bookings.Add(book);
+                    db.SaveChanges();
+                    Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID);
+                    ViewBag.Email = model.Email;
+
+                    tc.Complete();
+                }
+
                 return View("CheckEmail");
             }
             var errors = ModelState.Values.SelectMany(v => v.Errors);

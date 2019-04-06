@@ -40,9 +40,11 @@ namespace AppointLess2.Controllers
         [Authorize]
         //// GET: BookingsAdmin
         // GET: WeekViewAdmin/5
-        public new ActionResult WeekViewAdmin(int schedule)
+        public ActionResult WeekViewAdmin(int schedule)
         {
             var sched = db.Schedules.Find(schedule);
+            //if (sched.AspNetUser.UserName != User.Identity.Name) { return null; }
+
             var dt = Utils.Utils.GetStartOfCurrentWeek();            
 
             BookingWeekVM vm = new BookingWeekVM(sched, dt, BookingViewMode.Admin) ;
@@ -57,6 +59,7 @@ namespace AppointLess2.Controllers
 
             int bid = int.Parse(Request.Form["bookingID"]);
             var bkng = db.Bookings.Find(bid);
+            //bkng.TimeSlot.Schedule.AspNetUser
             return View("Cancel", bkng);
         }
 
@@ -66,6 +69,7 @@ namespace AppointLess2.Controllers
         {
             int bid = int.Parse(Request.Form["bookingID"]);
             var bkng = db.Bookings.Find(bid);
+            //bkng.TimeSlot.Schedule.AspNetUser
             int schedId = bkng.TimeSlot.ScheduleID;
             db.Bookings.Remove(bkng);
             db.SaveChanges();
