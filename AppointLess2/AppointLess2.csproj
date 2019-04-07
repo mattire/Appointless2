@@ -250,6 +250,7 @@
     <Compile Include="TimeSlot.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utils\AccessCheck.cs" />
     <Compile Include="Utils\DbUtils.cs" />
     <Compile Include="Utils\EmailManager.cs" />
     <Compile Include="Utils\Utils.cs" />

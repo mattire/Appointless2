@@ -21,7 +21,7 @@ namespace AppointLess2.Controllers
             var schedule = db.Schedules.Find(schedID);
 
             // TODO CHECK IF IT'S USERS SCHEDULE
-            //if (schedule.AspNetUser.UserName != User.Identity.Name) { return null; }
+            if (schedule.AspNetUser.UserName != User.Identity.Name) { return null; }
 
             //DateTime? weekStart = null;
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
@@ -43,7 +43,7 @@ namespace AppointLess2.Controllers
         public ActionResult WeekViewAdmin(int schedule)
         {
             var sched = db.Schedules.Find(schedule);
-            //if (sched.AspNetUser.UserName != User.Identity.Name) { return null; }
+            if (sched.AspNetUser.UserName != User.Identity.Name) { return null; }
 
             var dt = Utils.Utils.GetStartOfCurrentWeek();            
 
@@ -69,7 +69,7 @@ namespace AppointLess2.Controllers
         {
             int bid = int.Parse(Request.Form["bookingID"]);
             var bkng = db.Bookings.Find(bid);
-            //bkng.TimeSlot.Schedule.AspNetUser
+            if (bkng.TimeSlot.Schedule.AspNetUser.UserName != User.Identity.Name) { return null; }
             int schedId = bkng.TimeSlot.ScheduleID;
             db.Bookings.Remove(bkng);
             db.SaveChanges();

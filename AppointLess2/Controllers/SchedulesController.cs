@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AppointLess2;
+using Microsoft.AspNet.Identity;
 
 namespace AppointLess2.Controllers
 {
@@ -58,8 +59,18 @@ namespace AppointLess2.Controllers
         //public ActionResult Create([Bind(Include = "Id,Name,UserID")] Schedule schedule)
         public ActionResult Create([Bind(Include = "Name,UserID")] Schedule schedule)
         {
+            var id =Request.Form["UserId"];
+            System.Diagnostics.Debug.WriteLine(User.Identity.Name);
+            System.Diagnostics.Debug.WriteLine(Request.LogonUserIdentity.User.Value);
+            System.Diagnostics.Debug.WriteLine("");
+            string userId = User.Identity.GetUserId();
+
+            schedule.UserID = User.Identity.GetUserId();
+
+
             if (ModelState.IsValid)
             {
+                
                 db.Schedules.Add(schedule);
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");

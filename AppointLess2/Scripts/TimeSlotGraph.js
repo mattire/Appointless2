@@ -9,7 +9,8 @@ function WriteToCanvas(hour, mins, days, color)
     i = 0;
     days.forEach(function (d)
     {
-        if (d === 1) {
+        //if (d === 1) {
+        if (d == true) {
             var startX = i * 50;
             var lenX = 50;
             var startY = hour;
@@ -101,7 +102,7 @@ function readTSMap()
 {
     var tsLst = document.getElementsByClassName("TimeSlot");
     var arr = Array.prototype.slice.call(tsLst);
-        var contentsLst = arr.map(function (a) { return a.textContent; });
+    var contentsLst = arr.map(function (a) { return a.textContent; });
     return contentsLst;
 }
 

@@ -4,7 +4,7 @@
     ViewBag.Title = "Builder";
 }
 <br />
-<h2>Ajanvarauslistan hallinta</h2>
+<h2>Ajanvarauslistan aikojen hallinta</h2>
 
 @if (Model != null) {
 }
@@ -98,6 +98,11 @@
         {
             startHour = (int)Model.DailyStartTime;
             endHour = (int)Model.DailyEndTime;
+        }
+        else
+        {
+            Model.DailyStartTime = startHour;
+            Model.DailyEndTime = endHour;
         }
 
         @*<table style="border: 1px solid black;">*@
@@ -210,8 +215,8 @@
     }
 
     $(document).ready(function () {
-        var dst = @Model.DailyStartTime;
-        var det = @Model.DailyEndTime;
+        //var dst = @Model.DailyStartTime;
+        //var det = @Model.DailyEndTime;
         var timeSlots = document.getElementsByClassName("timeslot");
         var arr = Array.prototype.slice.call(timeSlots);
         var contentsLst = arr.map(function (a) { return a.textContent; });

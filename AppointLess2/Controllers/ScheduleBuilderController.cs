@@ -32,6 +32,7 @@ namespace AppointLess2.Controllers
             {
                 return HttpNotFound();
             }
+            if (!Utils.AccessCheck.IsEntityCreator(ts, User)) { return new HttpUnauthorizedResult(); }
             return View(ts);
         }
 
@@ -49,6 +50,8 @@ namespace AppointLess2.Controllers
         public ActionResult EditTS(int id)
         {
             var ts = db.TimeSlots.FirstOrDefault(t => t.Id == id);
+            if (!Utils.AccessCheck.IsEntityCreator(ts, User)) { return new HttpUnauthorizedResult(); }
+
             var tsVM = new TimeSlotVM(ts);
             return View("EditTimeSlot", tsVM);
         }
@@ -59,15 +62,10 @@ namespace AppointLess2.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var schedID = int.Parse(Request.Form["ScheduleID"]);
-                //var tsID = int.Parse(Request.Form["Id"]);
-                ////var tsTimeOfDay = int.Parse(Request.Form["TimeOfDay"]);
-                //TimeSlot slot = vm.ToTS(Request);
-                //slot.ScheduleID = schedID;
-                //slot.Id = tsID;
-
                 ResetIdsFromReq(vm, Request);
                 TimeSlot slot = vm.ToTS(Request);
+
+                if (!Utils.AccessCheck.IsEntityCreator(slot, User)) { return new HttpUnauthorizedResult(); }
 
                 db.Entry(slot).State = EntityState.Modified;
                 db.SaveChanges();
@@ -92,6 +90,10 @@ namespace AppointLess2.Controllers
         public ActionResult CreateTS(int scheduleID)
         {
             var sch = db.Schedules.FirstOrDefault(s => s.Id == scheduleID);
+
+            ActionResult excep = Utils.AccessCheck.CheckEntity(sch, User);
+            if (excep != null) { return excep; }
+
             var tsVM = new TimeSlotVM(new TimeSlot(), sch);
             tsVM.ScheduleID = scheduleID;
             return View("CreateTimeSlot", tsVM);
@@ -109,7 +111,13 @@ namespace AppointLess2.Controllers
             {
                 var schedID = int.Parse(Request.Form["ScheduleID"]);
                 TimeSlot ts = timeSlotVM.ToTS(Request);
+
+                // Check that user is the owner of specified schedule:
+                ActionResult excep = Utils.AccessCheck.CheckEntity(db.Schedules.Find(schedID), User);
+                if (excep != null) { return excep; }
+
                 ts.ScheduleID = schedID;
+
                 db.TimeSlots.Add(ts);
                 db.SaveChanges();
                 return RedirectToAction("Edit", new { id = schedID });
@@ -121,12 +129,11 @@ namespace AppointLess2.Controllers
         }
 
 
-        // GET: SheduleBuilder/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+        //// GET: SheduleBuilder/Details/5
+        //public ActionResult Details(int id)
+        //{
+        //    return View();
+        //}
 
         // GET: SheduleBuilder/Edit/5
         public ActionResult Edit(int id)
@@ -134,11 +141,14 @@ namespace AppointLess2.Controllers
             var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
             if (sched != null)
             {
+                if (!Utils.AccessCheck.IsEntityCreator(sched, User)) { return new HttpUnauthorizedResult(); }
+
                 var svm = new ScheduleVM(sched);
                 return View("Builder", svm);
             }
             else {
-                return View("Builder", null);
+                return HttpNotFound();
+                //return View("Builder", null);
             }
         }
 
@@ -149,6 +159,8 @@ namespace AppointLess2.Controllers
             try
             {
                 var sched = db.Schedules.FirstOrDefault(s => s.Id == id);
+                if (!Utils.AccessCheck.IsEntityCreator(sched, User)) { return new HttpUnauthorizedResult(); }
+
                 var name = collection["Name"];
                 var start   = int.Parse(collection["DailyStartTime"]);
                 var end     = int.Parse(collection["DailyEndTime"]);
@@ -172,26 +184,26 @@ namespace AppointLess2.Controllers
             }
         }
 
-        // GET: SheduleBuilder/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: SheduleBuilder/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //// GET: SheduleBuilder/Delete/5
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
+        
+        //// POST: SheduleBuilder/Delete/5
+        //[HttpPost]
+        //public ActionResult Delete(int id, FormCollection collection)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add delete logic here
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
         protected override void Dispose(bool disposing)
         {
