@@ -60,10 +60,19 @@ namespace AppointLess2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditTS([Bind(Include = "TimeOfDay,LengthMinutes")] TimeSlotVM vm)
         {
+
             if (ModelState.IsValid)
             {
+                //var chedIdStr = Request.Form["ScheduleID"];
+                //slot.ScheduleID= int.Parse(chedIdStr);
                 ResetIdsFromReq(vm, Request);
-                TimeSlot slot = vm.ToTS(Request);
+                TimeSlot slot = vm.ToTS(Request, db);
+                //if (slot.Schedule == null) {
+                //    slot.Schedule = db.Schedules.Find(slot.ScheduleID);
+                //}
+                //var oldSlot = db.TimeSlots.Find(slot.Id);
+                //if (oldSlot == null) { return new HttpNotFoundResult(); }
+                //slot.Schedule = oldSlot.Schedule;
 
                 if (!Utils.AccessCheck.IsEntityCreator(slot, User)) { return new HttpUnauthorizedResult(); }
 
@@ -110,13 +119,13 @@ namespace AppointLess2.Controllers
             if (ModelState.IsValid)
             {
                 var schedID = int.Parse(Request.Form["ScheduleID"]);
-                TimeSlot ts = timeSlotVM.ToTS(Request);
+                TimeSlot ts = timeSlotVM.ToTS(Request, db);
 
                 // Check that user is the owner of specified schedule:
-                ActionResult excep = Utils.AccessCheck.CheckEntity(db.Schedules.Find(schedID), User);
+                ActionResult excep = Utils.AccessCheck.CheckEntity(ts, User);
                 if (excep != null) { return excep; }
 
-                ts.ScheduleID = schedID;
+                //ts.ScheduleID = schedID;
 
                 db.TimeSlots.Add(ts);
                 db.SaveChanges();

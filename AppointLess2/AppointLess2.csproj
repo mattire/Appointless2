@@ -251,6 +251,7 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Utils\AccessCheck.cs" />
+    <Compile Include="Utils\BookingManager.cs" />
     <Compile Include="Utils\DbUtils.cs" />
     <Compile Include="Utils\EmailManager.cs" />
     <Compile Include="Utils\Utils.cs" />
@@ -370,6 +371,7 @@
     <Content Include="Views\Temp\Index.cshtml" />
     <Content Include="Views\Shared\WeekViewAdmin.cshtml" />
     <Content Include="Views\BookingsAdmin\Cancel.cshtml" />
+    <Content Include="Views\Bookings\BookedError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

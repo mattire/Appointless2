@@ -114,7 +114,7 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
             //this.DaysOfWeek     = ts.DaysOfWeek    ;
         }
 
-        internal TimeSlot ToTS(HttpRequestBase req )
+        internal TimeSlot ToTS(HttpRequestBase req, Entities db = null)
         {
             var ts = new TimeSlot() {
                 Id              = Id,
@@ -125,6 +125,11 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
 
             //var str = string.Join("", this.DaysOfWeek.Select(d => d.Selected ? "1" : "0"));
             //ts.DaysOfWeek = (byte)Convert.ToInt32(str, 2);
+
+            if (ts.Schedule == null && db!=null)
+            {
+                ts.Schedule = db.Schedules.Find(ts.ScheduleID);
+            }
 
             var binStrLst = new List<string>() { "Su", "La", "Pe", "To", "Ke", "Ti", "Ma" }.Select(s => req.Form.AllKeys.Contains(s) ? "1" : "0");
             var binStr = string.Join("", binStrLst);

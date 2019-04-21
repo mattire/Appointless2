@@ -17,8 +17,10 @@ namespace AppointLess2.Controllers
 
     public class BookingsController : Controller
     {
-        private Entities db = new Entities();
+        private Entities db  = new Entities();
         private static Random rnd = new Random();
+
+        private Object bookingCreationLock = new Object(); // prevent double bookings any time
 
         /*
         // GET: Temp
@@ -117,41 +119,60 @@ namespace AppointLess2.Controllers
             timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
             eventDate = Request.Form["EventDate"];
             description = Request.Form["Description"];
+
+            bool availabilitySuccess = false;
             if (ModelState.IsValid)
             {
-                using (TransactionScope tc = new TransactionScope())
-                {
-                    DateTime eventDT = Utils.Utils.FromString(eventDate);
+                lock (bookingCreationLock) {
 
-                    var book = new Booking()
+
+                    using (TransactionScope tc = new TransactionScope(TransactionScopeOption.Required))
                     {
-                        Email = model.Email,
-                        Name = model.BookerName,
-                        Phone = model.PhoneNumber,
-                        Time = eventDT,
-                        TimeSlotID = timeSlotId,
-                        UUID = Guid.NewGuid(),
-                        Status = 0,
-                        Descrption = description
-                    };
-                    //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
-                    db.Bookings.Add(book);
-                    db.SaveChanges();
-                    Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID);
-                    ViewBag.Email = model.Email;
+                        DateTime eventDT = Utils.Utils.FromString(eventDate);
 
-                    tc.Complete();
+                        var book = new Booking()
+                        {
+                            Email = model.Email,
+                            Name  = model.BookerName,
+                            Phone = model.PhoneNumber,
+                            Time  = eventDT,
+                            TimeSlotID = timeSlotId,
+                            UUID = Guid.NewGuid(),
+                            Status = 0,
+                            Descrption = description
+                        };
+                        //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
+
+                        // check if is still free
+                        if (!Utils.BookingManager.CheckIfBookingForSlotIsStillAwailable(book, db))
+                        {
+                            availabilitySuccess = false;
+                        }
+                        else {
+                            db.Bookings.Add(book);
+                            db.SaveChanges();
+                            Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID); // throws if fails
+                            ViewBag.Email = model.Email;
+                        }
+
+                        tc.Complete();
+                    }
                 }
-
-                return View("CheckEmail");
+                if (availabilitySuccess)
+                {
+                    return View("CheckEmail");
+                }
+                else {
+                    return View("BookedError", model);
+                }
             }
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            //var errors = ModelState.Values.SelectMany(v => v.Errors);
 
             model.TimeSlot = db.TimeSlots.Find(timeSlotId);
             model.EventDate = eventDate;
             model.Number1 = rnd.Next(100);
             model.Number2 = rnd.Next(100);
-            return View("Book", model); ;
+            return View("Book", model);
         }
 
 
