@@ -148,7 +148,9 @@ namespace AppointLess2.Controllers
                         {
                             availabilitySuccess = false;
                         }
-                        else {
+                        else
+                        {
+                            availabilitySuccess = true;
                             db.Bookings.Add(book);
                             db.SaveChanges();
                             Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID); // throws if fails

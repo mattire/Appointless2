@@ -28,9 +28,11 @@ namespace AppointLess2.Utils
                     EnableSsl = true,
                 };
 
+                var host = ConfigurationManager.AppSettings["HostAddressName"];
+
                 mail.Subject = "this is a test email.";
                 //mail.Body = string.Format("Clikkaa tätä linkkiä tapauksen vahvistamiseksi: http://localhost:3998/Confirmation/Confirm?strGuid={0}",guid);
-                mail.Body = string.Format(format, guid);
+                mail.Body = string.Format(format, host, guid);
                 client.Send(mail);
                 Console.WriteLine("Sent");
             }

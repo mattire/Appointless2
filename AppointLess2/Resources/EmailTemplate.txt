@@ -1,4 +1,4 @@
 ﻿
 
 Voit vahvistaa tapaamisen tiedot tässä osoitteessa: 
-  http://localhost:61075/Bookings/ClientManage?strGuid={0}
+  {0}/Bookings/ClientManage?strGuid={1}
