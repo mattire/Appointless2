@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Reflection;
 using System.IO;
+using System.Configuration;
 
 namespace AppointLess2.Utils
 {
