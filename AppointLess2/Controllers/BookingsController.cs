@@ -20,9 +20,9 @@ namespace AppointLess2.Controllers
         private Entities db = new Entities();
         private static Random rnd = new Random();
 
-        /*
+        //*
         // GET: Temp
-        public ActionResult Index(string yearDotMothDotDay)
+        public ActionResult Index(int? schedID, string yearDotMothDotDay)
         {
             //DateTime? weekStart = null;
             var weekStart = Utils.Utils.GetStartOfCurrentWeek();
@@ -31,12 +31,16 @@ namespace AppointLess2.Controllers
                 var parsed = DateTime.ParseExact(yearDotMothDotDay, "yyyy.M.d", CultureInfo.InvariantCulture);
                 weekStart = Utils.Utils.WeekStartByDateTime(parsed);
             }
+            if (schedID != null)
+            {
+                var sched = db.Schedules.Find(schedID);
 
-            var sched = db.Schedules.Find(1);
-            ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, (DateTime)weekStart);
-            return View(weekVM);
+                ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, (DateTime)weekStart);
+                return View("WeekView2", weekVM);
+            }
+            return null;
         }
-        */
+        //*/
 
         // GET: WeekView/5
         public ActionResult BookingView(string name)

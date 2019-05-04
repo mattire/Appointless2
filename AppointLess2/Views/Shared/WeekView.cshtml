@@ -114,7 +114,9 @@
 <div id="EventInput" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
 
     @using (Html.BeginForm("CreateBooking1", "BookingView", FormMethod.Post))
+    
     {
+    
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
@@ -351,7 +353,6 @@
 
         //console.log(contentsLst);
         for (var i in contentsLst) {
-
             WriteTsToTable(contentsLst[i], cd, pholidays);
         }
     });
