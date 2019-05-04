@@ -1,0 +1,178 @@
+﻿@model AppointLess2.ViewModels.BookingWeekVM
+
+@{
+    ViewBag.Title = "WeekView";
+}
+
+@{
+    ViewBag.Title = "Index";
+    var NextMonday = Model.WeekDays.ElementAt(0).AddDays(7);
+    var PreviousMonday = Model.WeekDays.ElementAt(0).AddDays(-7);
+}
+
+
+
+<h2>Ajanvaraus - @Model.Schedule.Name</h2>
+
+@if (Model.WeekDays.First() > DateTime.Now)
+{
+    @Html.ActionLink("Edellinen viikko", "Index", "Bookings", new {
+    schedID = Model.Schedule.Id,
+    yearDotMothDotDay = PreviousMonday.ToString("yyyy.M.d"),
+}, null)
+}
+<br />
+@Html.ActionLink("Seuraava viikko", "Index", "Bookings", new {
+    schedID = Model.Schedule.Id,
+    yearDotMothDotDay = NextMonday.ToString("yyyy.M.d"),
+}, null)
+
+<br />
+
+
+@{
+    // Write Bookings and Days for each timeslot (in int format) for javascript to read
+    foreach (var tsWIBs in Model.TimeSlotWeekIntBookingsMap)
+    {
+        // hour, min lenMin, bookingDays, confirmedBkngDays, tsDaysOfWeek, timeSlotId
+        <span class="timeslot" style="display:none">@tsWIBs.Key.TimeOfDay.Hours,@tsWIBs.Key.TimeOfDay.Minutes,@tsWIBs.Key.LengthMinutes,@tsWIBs.Value.Item1.Item1,@tsWIBs.Value.Item1.Item2,@tsWIBs.Value.Item2,@tsWIBs.Key.Id</span>
+    }
+
+    int startHour = Model.Schedule.StartOfDay ?? 0;
+    int endHour = Model.Schedule.EndOfDay ?? 24;
+
+    foreach (var h in Model.HolidaysInt)
+    {
+        <span class="holiday" style="display:none">@h</span>
+    }
+
+    int cd = -1;
+    if (Model.WeekDays.First() <= Model.Current)
+    {
+        cd = ((int)Model.Current.DayOfWeek == 0) ? 7 : (int)Model.Current.DayOfWeek;
+    }
+    <span id="currentDay"
+          style="display:none">@cd</span>
+
+        <span id="personalHolidays" style="display:none">@String.Join(",", Model.PersonalInt.ToList())</span>
+
+
+        if (Model.Mode == AppointLess2.ViewModels.BookingViewMode.Admin)
+        {
+            //Dictionary<string, string> bookingStrs = new Dictionary<string, string>();
+            string jRep = "var jsBookings = {";
+
+            foreach (var ts in Model.TimeSlotWeekIntBookingsMap.Keys)
+            {
+                // get ts bkngs in selected week
+                var bkngs = ts.Bookings.Where(b => b.Time >= Model.WeekDays.First() && b.Time <= Model.WeekDays.Last());
+                foreach (var bkng in bkngs)
+                {
+                    var key = AppointLess2.Utils.Utils.Booking2StringKey(bkng);
+                    var str = AppointLess2.Utils.Utils.Booking2Str(bkng);
+                    //bookingStrs.Add(key, str);
+                    jRep += ("'" + key + "' : '" + str + "' ,");
+                }
+            }
+            jRep += "}";
+            <script>@jRep</script>
+
+        }
+}
+
+<div class="jumbotron" id="tableContainer">
+    <table style="table-layout: fixed; width: 100%;">
+        <tr>
+            <td>&nbsp;     </td>
+            @{
+                foreach (var day in Model.WeekDays)
+                {
+                    int dow = (int)day.DayOfWeek;
+                    var dateStr = day.ToString("yyyy.MM.dd");
+                    <th id="th-@dow" data-date-text="@dateStr">@Model.GetDayName(day.DayOfWeek) @day.ToString("d.M")</th>
+                }
+            }
+        </tr>
+
+        @{
+            var quarterMins = new List<string>() { "00", "15", "30", "45" };
+            for (int hour = startHour; hour < endHour; hour++)
+            {
+                foreach (var mins in quarterMins)
+                {
+                    <tr>
+                        <td>@hour:@mins</td>
+                        <td id="td1-@hour:@mins"></td>
+                        <td id="td2-@hour:@mins"></td>
+                        <td id="td3-@hour:@mins"></td>
+                        <td id="td4-@hour:@mins"></td>
+                        <td id="td5-@hour:@mins"></td>
+                        <td id="td6-@hour:@mins"></td>
+                        <td id="td7-@hour:@mins"></td>
+                    </tr>
+                }
+            }
+        }
+    </table>
+</div>
+
+
+<div id="EventInput" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
+
+    @using (Html.BeginForm("CreateBooking1", "BookingView", FormMethod.Post))
+
+    {
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+
+        <label id="dateAndTime"
+               style="padding:10px 10px 10px 10px; font-size:large; white-space: pre-wrap"></label><br />
+        @Html.HiddenFor(m => m.Booking.EventDate)
+        @Html.HiddenFor(m => m.Booking.TimeSlotId);
+
+        <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
+               formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
+        <input type="button" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
+
+    }
+
+</div>
+
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+@*<script src="~/Scripts/WeekViewOldJS.js"></script>*@
+<script src="~/Scripts/WeekViewJS.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        //var dst = @Model.Schedule.StartOfDay;
+        //var det = @Model.Schedule.EndOfDay;
+        var timeSlots = document.getElementsByClassName("timeslot");
+        var holidays = document.getElementsByClassName("holiday");
+        var currentDay = document.getElementById("currentDay");
+        var pholidays = document
+            .getElementById("personalHolidays")
+            .textContent
+            .split(',').map(function (a) { return parseInt(a); });
+
+        var timeSlotArr = Array.prototype.slice.call(timeSlots);
+        var holidayArr = Array.prototype.slice.call(holidays);
+        var contentsLst = timeSlotArr.map(function (a) { return a.textContent; });
+        var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
+        var cd = parseInt(currentDay.textContent);
+        console.log("holidays");
+        console.log(holidaysTxts);
+
+        InitWeekTimeSlots(contentsLst);
+        WriteHolidaysToTable(holidaysTxts);
+
+        //console.log(contentsLst);
+        for (var i in contentsLst) {
+            WriteTsToTable(contentsLst[i], cd, pholidays);
+        }
+    });
+
+</script>
