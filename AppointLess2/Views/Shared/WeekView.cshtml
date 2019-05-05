@@ -153,6 +153,13 @@
 
     var currentDay = parseInt(document.getElementById("currentDay").textContent);
 
+    var pholidays = document
+        .getElementById("personalHolidays")
+        .textContent
+        .split(',').map(function (a) { return parseInt(a); });
+    //console.log('~~~~~~~~~~~~~~~~~~~~');
+    //console.log(pholidays);
+
     @{
         foreach (var ts in Model.Schedule.TimeSlots)
         {
@@ -178,10 +185,10 @@
             }
             if (futureWeek)
             {
-                @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId, null));
+                @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId, null, pholidays));
             }
             else {
-                @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId, currentDay));
+                @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId, currentDay, pholidays));
             }
         }
     }

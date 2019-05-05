@@ -60,10 +60,11 @@ function WriteHolidaysToTable(holidayNums) {
 // class TableSlot
 // 
 function TableSlot(startHour, startMins, lengthMins, days,
-    bookings = null,
-    mode = Mode.client,
-    tsId = null,
-    currentDay = null)
+    bookings   = null,
+    mode       = Mode.client,
+    tsId       = null,
+    currentDay = null,
+    pholidays = null)
 {
     this.mStartHour  = startHour;
     this.mStartMins  = startMins;
@@ -71,9 +72,10 @@ function TableSlot(startHour, startMins, lengthMins, days,
     this.mDays       = days;
     this.mCellCount  = lengthMins / 15;
     this.mBookings   = bookings;
-    this.mMode = mode;
+    this.mMode       = mode;
     this.mTimeSlotId = tsId;
     this.mCurrentDay = currentDay;
+    this.mPHolidays  = pholidays;
 }
 
 TableSlot.prototype.print = function () {
@@ -132,19 +134,21 @@ TableSlot.prototype.WriteToTable = function () {
 
     var bookedDays = this.mBookings.map(function (b) { return b.Day; });
     var bookingMap = this.mBookings.map(function (b) { return { day: b.Day, booking: b } });
-
+    var self = this;
     elemBlocks.map(function (deb) {
         if ($.inArray(deb.day, bookedDays) == -1) // true if not in booked days
         {
-            console.log("*************");
-            console.log(currentDay);
-            if (currentDay == null || currentDay < deb.day) {
-                //if (deb.day > this.currentDay)
-                self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
-                //self.SetEventHandler(deb.elemBlock, function () { alert('afaf'); });
-                self.SetEventHandler('click', deb.elemBlock, function () {
-                    self.UnreservedClickHandler(deb.elemBlock, event);
-                });
+            if (currentDay == null || currentDay < deb.day)
+            {
+                if ($.inArray(deb.day, self.mPHolidays) == -1) // skip holidays
+                {
+                    //if (deb.day > this.currentDay)
+                    self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
+                    //self.SetEventHandler(deb.elemBlock, function () { alert('afaf'); });
+                    self.SetEventHandler('click', deb.elemBlock, function () {
+                        self.UnreservedClickHandler(deb.elemBlock, event);
+                    });
+                }
             }
         } else {
             if (self.mMode == Mode.admin) {
