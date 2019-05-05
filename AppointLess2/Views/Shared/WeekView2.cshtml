@@ -133,7 +133,9 @@
 
         <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
                formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
-        <input type="button" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
+        <input type="button" id="hide_div" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
+        @*<input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />*@
+
 
     }
 
@@ -147,7 +149,46 @@
 
 <script>
 
-    $(document).ready(function () {
+    @{
+        foreach (var ts in Model.Schedule.TimeSlots)
+        {
+            int hour = ts.TimeOfDay.Hours;
+            int mins = ts.TimeOfDay.Minutes;
+            int lenMins = ts.LengthMinutes;
+            int days = ts.DaysOfWeek;
+            long tsId = ts.Id;
+
+            @*
+            @:console.log(@hour);
+            @:console.log(@mins);
+            @:console.log(@lenMins);
+            *@
+
+            var bkngs = Model.GetTimeSlotBookgingsInJson(ts, false);
+            @:var bookings = [];
+            foreach (var b in bkngs)
+            {
+                @:var jsonBooking = JSON.parse("@b".replace(/&quot;/g, '"'));
+                @:console.log(jsonBooking);
+                @:bookings.push(jsonBooking);
+            }
+            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId));
+        }
+    }
+
+    var holidays = document.getElementsByClassName("holiday");
+    var holidayArr = Array.prototype.slice.call(holidays);
+    var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
+    WriteHolidaysToTable(holidaysTxts);
+
+    slotList.forEach(function (slot) {
+        //slot.print();
+        slot.WriteToTable();
+    });
+
+
+
+    @*$(document).ready(function () {
         //var dst = @Model.Schedule.StartOfDay;
         //var det = @Model.Schedule.EndOfDay;
         var timeSlots = document.getElementsByClassName("timeslot");
@@ -173,6 +214,6 @@
         for (var i in contentsLst) {
             WriteTsToTable(contentsLst[i], cd, pholidays);
         }
-    });
+    });*@
 
 </script>

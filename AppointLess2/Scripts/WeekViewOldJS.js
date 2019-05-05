@@ -140,7 +140,7 @@ function HandleClick(tsId, elem) {
 
     $("#dateAndTime").text(md + " " + time + "\n" + spl[2] + "minuuttia");
     var elemSlotId = document.getElementById("Booking_TimeSlotId");
-    var bookingED = document.getElementById("Booking_EventDate");
+    var bookingED  = document.getElementById("Booking_EventDate");
     elemSlotId.value = tsId;
     bookingED.value = dateString;
 

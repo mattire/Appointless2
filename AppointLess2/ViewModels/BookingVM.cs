@@ -3,6 +3,7 @@ using Nager.Date.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -123,42 +124,88 @@ namespace AppointLess2.ViewModels
                                    WeekDays.First() < h.endDate).ToList();
              GetPersonalHolidayWeekDays();
 
-
             // National holidays
             HolidaysInt = Holidays.Select(
                 h => ((int)h.DayOfWeek) == 0 ? 7 : (int)h.DayOfWeek).ToList();
             //Bookings = schedule.Bookings.Where(b => b.Time >= WeekDays.First() && b.Time <= WeekDays.Last());
 
-                TimeSlotWeekIntBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var fstWeekDay = WeekDays.First();
+            var lstWeekDay = WeekDays.Last();
+            /*
+            var tsBooks = Schedule.TimeSlots.Select(ts=>new
+            {
+                ts,
+                books = ts.Bookings.Where(
+                            b =>    b.Time >= fstWeekDay &&
+                                    b.Time <= lstWeekDay)
+            }).ToList();
+            System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds);
+
+            TimeSlotWeekIntBookingsMap = tsBooks.ToDictionary(tup => tup.ts, tup => {
+                var weekBookings = tup.books;
+                var confirmedWeekBookings = weekBookings.Where(b => b.Status >= 1);
+
+                IEnumerable<int> bkngsDaysToInts = weekBookings
+                                        .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek) - 1);
+                IEnumerable<int> confBkngsDaysToInts = confirmedWeekBookings
+                                        .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek) - 1);
+
+                int res = 0;
+                foreach (var di in bkngsDaysToInts)
                 {
-                    var weekBookings 
-                        = ts.Bookings.Where(
-                                b => b.Time >= WeekDays.First() && 
-                                b.Time <= WeekDays.Last());
+                    res = res | (int)Math.Pow(2, di);
+                }
+                int res2 = 0;
+                foreach (var di in confBkngsDaysToInts)
+                {
+                    res2 = res2 | (int)Math.Pow(2, di);
+                }
 
-                    var confirmedWeekBookings 
-                            = weekBookings.Where(b => b.Status >= 1);
+                return new Tuple<Tuple<int?, int?>, int?>(
+                    new Tuple<int?, int?>(res, res2), tup.ts.DaysOfWeek);
+            });
+            /*/
+            TimeSlotWeekIntBookingsMap = Schedule.TimeSlots.ToDictionary(ts => ts, ts =>
+            {
+                var swi = new Stopwatch(); swi.Start();
+                var weekBookings 
+                    = ts.Bookings.Where(
+                            b => b.Time >= fstWeekDay && 
+                            b.Time <= lstWeekDay);
+                swi.Stop(); System.Diagnostics.Debug.WriteLine(swi.ElapsedMilliseconds);
 
-                    IEnumerable<int> bkngsDaysToInts = weekBookings
-                                            .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek)-1);
+                //System.Diagnostics.Debug.WriteLine(weekBookings);
 
-                    IEnumerable<int> confBkngsDaysToInts = confirmedWeekBookings
-                                            .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek) - 1);
+                var confirmedWeekBookings 
+                        = weekBookings.Where(b => b.Status >= 1);
 
-                    int res = 0;
-                    foreach (var di in bkngsDaysToInts) {
-                        res = res | (int)Math.Pow(2, di);
-                    }
-                    int res2 = 0;
-                    foreach (var di in confBkngsDaysToInts)
-                    {
-                        res2 = res2 | (int)Math.Pow(2, di);
-                    }
 
-                    return new Tuple<Tuple<int?,int?>, int?>(
-                        new Tuple<int?, int?>(res,res2), ts.DaysOfWeek);
-                    //return new Tuple<int?, int?>(-1, -1);
-                });
+                IEnumerable<int> bkngsDaysToInts = weekBookings
+                                        .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek)-1);
+
+                IEnumerable<int> confBkngsDaysToInts = confirmedWeekBookings
+                                        .Select(b => b.Time.DayOfWeek == DayOfWeek.Sunday ? 6 : ((int)b.Time.DayOfWeek) - 1);
+
+                int res = 0;
+                foreach (var di in bkngsDaysToInts) {
+                    res = res | (int)Math.Pow(2, di);
+                }
+                int res2 = 0;
+                foreach (var di in confBkngsDaysToInts)
+                {
+                    res2 = res2 | (int)Math.Pow(2, di);
+                }
+
+                return new Tuple<Tuple<int?,int?>, int?>(
+                    new Tuple<int?, int?>(res,res2), ts.DaysOfWeek);
+                //return new Tuple<int?, int?>(-1, -1);
+            });
+            //*/
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds);
             
         }
 

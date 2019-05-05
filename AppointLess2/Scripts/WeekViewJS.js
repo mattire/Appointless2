@@ -32,15 +32,42 @@ function ToHourMins(hour, min, len) {
     return arr;
 }
 
+function ToMonthAndDay(dayOfWeek) {
+    //console.log(dayOfWeek);
+    dayOfWeek = dayOfWeek == 7 ? 0 : dayOfWeek;
+    var key = 'th-' + dayOfWeek;
+    var th = document.getElementById(key);
 
-function TableSlot(startHour, startMins, lengthMins, days, bookings = null, mode = Mode.client) {
-    this.mStartHour = startHour;
-    this.mStartMins = startMins;
+    return [th.innerText, th.dataset.dateText];
+}
+
+function WriteHolidaysToTable(holidayNums) {
+    for (var i = 0; i < holidayNums.length; i++) {
+        var hn = holidayNums[i];
+        var select = "[id*='td" + hn + "-']";
+        var elems = document.querySelectorAll(select);
+        for (var i2 in elems) {
+            var e = elems[i2];
+            if (e.style !== undefined) {
+                e.style.backgroundColor = '#ff0000';
+            }
+        }
+    }
+}
+
+
+// 
+// class TableSlot
+// 
+function TableSlot(startHour, startMins, lengthMins, days, bookings = null, mode = Mode.client, tsId = null) {
+    this.mStartHour  = startHour;
+    this.mStartMins  = startMins;
     this.mLengthMins = lengthMins;
-    this.mDays = days;
-    this.mCellCount = lengthMins / 15;
-    this.mBookings = bookings;
+    this.mDays       = days;
+    this.mCellCount  = lengthMins / 15;
+    this.mBookings   = bookings;
     this.mMode = mode;
+    this.mTimeSlotId = tsId;
 }
 
 TableSlot.prototype.print = function () {
@@ -133,15 +160,34 @@ TableSlot.prototype.WriteToTable = function () {
                 } catch (e) {
                     console.log(e);
                 }
-
+            }
+            if (self.mMode == Mode.client) {
+                try {
+                    self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#ff8855');
+                } catch (e) {
+                    console.log(e);
+                }
             }
         }
     });
 }
 
 TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
-    console.log(ev);
+    console.log(ev.srcElement.id);
+    var weekdayNum = ev.srcElement.id[2]
+    var mon_n_day = ToMonthAndDay(weekdayNum);
+    console.log(mon_n_day);
     $('#EventInput').show();
+    console.log(elemBllock);
+    $('#dateAndTime').text(
+        mon_n_day[0] + " " +
+        this.mStartHour + ":" + this.mStartMins + "\n" +
+        this.mLengthMins + "minuuttia");
+
+    //this.m
+    $('#Booking_TimeSlotId').val(this.mTimeSlotId);
+    $('#Booking_EventDate').val(mon_n_day[1]);
+    
     //var firstElem = elemBllock[0];
     var eiWidth = $('#EventInput').width();
     eiWidth = eiWidth > 400 ? 300 : eiWidth;
@@ -199,9 +245,12 @@ TableSlot.prototype.ShowOnClickPos = function (uiElem, ev, offset = null) {
 }
 
 function HideInput(hashInp) {
-    //$('#EventInput').hide();
     $(hashInp).hide();
 }
+
+
+var hideBtn = document.getElementById('hide_div');
+hideBtn.onclick = function () { $('#EventInput').hide(); }
 
 
 var slotList = [];
