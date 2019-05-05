@@ -4,29 +4,24 @@
     ViewBag.Title = "WeekView";
 }
 
-@{
-    ViewBag.Title = "Index";
-    var NextMonday = Model.WeekDays.ElementAt(0).AddDays(7);
-    var PreviousMonday = Model.WeekDays.ElementAt(0).AddDays(-7);
-}
-
-
-
 <h2>Ajanvaraus - @Model.Schedule.Name</h2>
 
 @if (Model.WeekDays.First() > DateTime.Now)
 {
-    @Html.ActionLink("Edellinen viikko", "Index", "Bookings", new {
-    schedID = Model.Schedule.Id,
-    yearDotMothDotDay = PreviousMonday.ToString("yyyy.M.d"),
+    @Html.ActionLink("Edellinen viikko", "Previous", "Bookings", new {
+    Day = Model.WeekDays.ElementAt(0).Day,
+    Month = Model.WeekDays.ElementAt(0).Month,
+    Year = Model.WeekDays.ElementAt(0).Year,
+    Schedule = Model.Schedule.Id
 }, null)
 }
 <br />
-@Html.ActionLink("Seuraava viikko", "Index", "Bookings", new {
-    schedID = Model.Schedule.Id,
-    yearDotMothDotDay = NextMonday.ToString("yyyy.M.d"),
+@Html.ActionLink("Seuraava viikko", "Next", "Bookings", new {
+    Day = Model.WeekDays.ElementAt(0).Day,
+    Month = Model.WeekDays.ElementAt(0).Month,
+    Year = Model.WeekDays.ElementAt(0).Year,
+    Schedule = Model.Schedule.Id
 }, null)
-
 <br />
 
 
@@ -47,37 +42,36 @@
     }
 
     int cd = -1;
-    if (Model.WeekDays.First() <= Model.Current)
-    {
-        cd = ((int)Model.Current.DayOfWeek == 0) ? 7 : (int)Model.Current.DayOfWeek;
+    if (Model.WeekDays.First() <= Model.Current) {
+        cd = ((int)Model.Current.DayOfWeek==0)?7 : (int)Model.Current.DayOfWeek;
     }
     <span id="currentDay"
-          style="display:none">@cd</span>
+            style="display:none">@cd</span>
 
-        <span id="personalHolidays" style="display:none">@String.Join(",", Model.PersonalInt.ToList())</span>
+    <span id="personalHolidays" style="display:none">@String.Join(",", Model.PersonalInt.ToList())</span> 
 
 
-        if (Model.Mode == AppointLess2.ViewModels.BookingViewMode.Admin)
+    if (Model.Mode== AppointLess2.ViewModels.BookingViewMode.Admin)
+    {
+        //Dictionary<string, string> bookingStrs = new Dictionary<string, string>();
+        string jRep = "var jsBookings = {";
+
+        foreach (var ts in Model.TimeSlotWeekIntBookingsMap.Keys)
         {
-            //Dictionary<string, string> bookingStrs = new Dictionary<string, string>();
-            string jRep = "var jsBookings = {";
-
-            foreach (var ts in Model.TimeSlotWeekIntBookingsMap.Keys)
+            // get ts bkngs in selected week
+            var bkngs = ts.Bookings.Where(b => b.Time >= Model.WeekDays.First() && b.Time <= Model.WeekDays.Last());
+            foreach (var bkng in bkngs)
             {
-                // get ts bkngs in selected week
-                var bkngs = ts.Bookings.Where(b => b.Time >= Model.WeekDays.First() && b.Time <= Model.WeekDays.Last());
-                foreach (var bkng in bkngs)
-                {
-                    var key = AppointLess2.Utils.Utils.Booking2StringKey(bkng);
-                    var str = AppointLess2.Utils.Utils.Booking2Str(bkng);
-                    //bookingStrs.Add(key, str);
-                    jRep += ("'" + key + "' : '" + str + "' ,");
-                }
+                var key = AppointLess2.Utils.Utils.Booking2StringKey(bkng);
+                var str = AppointLess2.Utils.Utils.Booking2Str(bkng);
+                //bookingStrs.Add(key, str);
+                jRep += ("'" + key  + "' : '" + str + "' ,");
             }
-            jRep += "}";
-            <script>@jRep</script>
-
         }
+        jRep += "}";
+        <script>@jRep</script>
+
+    }
 }
 
 <div class="jumbotron" id="tableContainer">
@@ -120,9 +114,9 @@
 <div id="EventInput" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
 
     @using (Html.BeginForm("CreateBooking1", "BookingView", FormMethod.Post))
-
+    
     {
-
+    
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
@@ -133,9 +127,7 @@
 
         <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
                formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
-        <input type="button" id="hide_div" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
-        @*<input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />*@
-
+        <input type="button" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
 
     }
 
@@ -144,51 +136,200 @@
 
 
 <script src="~/Scripts/jquery-3.3.1.js"></script>
-@*<script src="~/Scripts/WeekViewOldJS.js"></script>*@
-<script src="~/Scripts/WeekViewJS.js"></script>
 
 <script>
 
-    @{
-        foreach (var ts in Model.Schedule.TimeSlots)
-        {
-            int hour = ts.TimeOfDay.Hours;
-            int mins = ts.TimeOfDay.Minutes;
-            int lenMins = ts.LengthMinutes;
-            int days = ts.DaysOfWeek;
-            long tsId = ts.Id;
+    var TimeSlots = [];
 
-            @*
-            @:console.log(@hour);
-            @:console.log(@mins);
-            @:console.log(@lenMins);
-            *@
+    function DaysToNums(days) {
+        var nums = [
+            (days & 1)  ? 1 : -1,
+            (days & 2)  ? 2 : -1,
+            (days & 4)  ? 3 : -1,
+            (days & 8)  ? 4 : -1,
+            (days & 16) ? 5 : -1,
+            (days & 32) ? 6 : -1,
+            (days & 64) ? 7 : -1,
+        ];
+        return nums.filter(function (v) { return v != -1 });
+    }
 
-            var bkngs = Model.GetTimeSlotBookgingsInJson(ts, false);
-            @:var bookings = [];
-            foreach (var b in bkngs)
-            {
-                @:var jsonBooking = JSON.parse("@b".replace(/&quot;/g, '"'));
-                @:console.log(jsonBooking);
-                @:bookings.push(jsonBooking);
+    function range(start, end, step = 1) {
+        const len = Math.floor((end - start) / step) + 1
+        return Array(len).fill().map((_, idx) => start + (idx * step))
+    }
+
+    function ToHourMins(hour, min, len) {
+        var decStart = parseInt(hour) + parseInt(min) / 60;
+        var decDiff = len / 60;
+        var decs = range(decStart, decStart + decDiff, 0.25);
+        var arr = decs.map(function (d) { var hours = Math.floor(d); mins = (d - hours) * 60; return hours + ":" + MinsToString(mins); });
+        arr.pop();
+        return arr;
+    }
+
+    function ToDtBlocks(hourMins, dnums) {
+        return dnums.map(function (d) {
+            return hourMins.map(function (hm) {
+                return "td" + d + "-" + hm;
+            });
+        });
+    }
+
+    function MinsToString(min) {
+        return (min + "").length == 1 ? "0" + min : "" + min;
+    }
+
+    function WriteDTBlock(dtBlock, color, tsId, allowClick) {
+        //var borderStyle = "thin solid #000000";
+        var borderStyle = "2px solid #000000";
+        //console.log(dtBlock);
+        var dtElems = dtBlock.map(function (dt) { return document.getElementById(dt); });
+        var arr = Array.prototype.slice.call(dtElems);
+        var first = arr[0];
+        var last = arr[arr.length - 1];
+
+        first.style.borderTop = borderStyle;
+        last.style.borderBottom = borderStyle;
+        arr.forEach(function (elem) {
+            elem.style.borderLeft = borderStyle;
+            elem.style.borderRight = borderStyle;
+            elem.style.backgroundColor = color;
+            //elem.dataset["timeSlot"] = tsId;
+            if (allowClick) {
+                elem.addEventListener("click", function () { HandleClick(tsId, elem); }, false);
             }
-            @:slotList.push(new TableSlot(@hour, @mins, @lenMins, @days, bookings, Mode.client, @tsId));
+
+        });
+    }
+
+    function DayNumFromDtStr(tdStr) {
+        return tdStr.slice(2, 3);
+    }
+
+    function WriteTsToTable(tsStr, currentDay, pholidays) {
+        //tsStr = tsStr.replace(/\r?\n|\r/g, '');
+        console.log(tsStr);
+        var spl = tsStr.split(",");
+
+        var hour = spl[0];
+        var min = spl[1];
+        var lenMins = spl[2];
+        var books = spl[3];
+        var conBooks = spl[4];
+        var days = spl[5];
+        var tsId = spl[6];
+
+        var dnums = DaysToNums(days);
+        var dbooks = DaysToNums(books);
+        var dcbooks = DaysToNums(conBooks);
+        var hourMins = ToHourMins(hour, min, lenMins);
+        var dtBlocks = ToDtBlocks(hourMins, dnums) //, dbooks, dcbooks)
+
+        for (var i in dtBlocks) {
+            var dtBlock = dtBlocks[i];
+
+            var dayNum = parseInt(DayNumFromDtStr(dtBlock[0]));
+
+            console.log("===================");
+            console.log(dayNum);
+            console.log(currentDay);
+            console.log(pholidays);
+            //if (dayNum > currentDay && !(dayNum in pholidays))
+            if (dayNum > currentDay && $.inArray(dayNum, pholidays)==-1)
+            {
+
+                if (!dbooks.includes(dayNum)) {
+                    WriteDTBlock(dtBlock, '#77ccff', tsId, true);
+                }
+                else {
+                    if (!dcbooks.includes(dayNum)) {
+                        WriteDTBlock(dtBlock, '#ffcc77', tsId, false);
+                    } else {
+                        WriteDTBlock(dtBlock, '#ff7711', tsId, false);
+                    }
+                }
+            }
+        }
+
+    }
+
+    var WeekTimeSlots = new Array();
+
+    function ToMonthAndDay(dayOfWeek)
+    {
+        //console.log(dayOfWeek);
+        dayOfWeek = dayOfWeek == 7 ? 0 : dayOfWeek;
+        var key = 'th-' + dayOfWeek;
+        var th = document.getElementById(key);
+
+        return [th.innerText, th.dataset.dateText];
+    }
+
+    function HandleClick(tsId, elem) {
+        var day = DayNumFromDtStr(elem.id);
+        var pair = WeekTimeSlots.find(function (p) { return p.key == tsId; });
+        var spl = pair.value;
+        var time = spl[0] + ":" + MinsToString(spl[1]) + " len: " + spl[2];
+        //var evInpWidth = $('#EventInput').clientWidth;
+
+        var time = spl[0] + ":" + MinsToString(spl[1]);
+        var dayOfWeek = parseInt(elem.id.split('-')[0].slice(2));
+        var tup = ToMonthAndDay(dayOfWeek);
+        var md = tup[0];
+        var dateString = tup[1];
+
+        $("#dateAndTime").text(md + " " + time + "\n" + spl[2] + "minuuttia");
+        var elemSlotId = document.getElementById("Booking_TimeSlotId");
+        var bookingED = document.getElementById("Booking_EventDate");
+        elemSlotId.value = tsId;
+        bookingED.value = dateString;
+
+        $('#EventInput').show();
+        var eiWidth = $('#EventInput').width();
+        eiWidth = eiWidth > 400 ? 300 : eiWidth;
+        $("#EventInput").css({ top: event.clientY + 30, left: event.clientX - eiWidth/2, position: 'absolute' });
+    }
+
+    function HideInput() {
+        //$('#EventInput').style.display = 'none';
+        $('#EventInput').hide();
+    }
+
+    function InitWeekTimeSlots(contentsLst) {
+        var splits = contentsLst.map(function (c) { return c.split(","); });
+        for (var i in splits) {
+            var spl = splits[i];
+            WeekTimeSlots.push({ key: spl[6], value: spl });
+        }
+        //console.log("**");
+        //console.log(WeekTimeSlots);
+    }
+
+    function ToDict(strArray) {
+        var d = {};
+        strArray.map(function (str) {
+            var spl = str.split(',');
+            d[spl[0]] = spl[1];
+        });
+        return d;
+    }
+
+    function WriteHolidaysToTable(holidayNums) {
+        for (var i = 0; i < holidayNums.length; i++) {
+            var hn = holidayNums[i];
+            var select = "[id*='td" + hn + "-']";
+            var elems = document.querySelectorAll(select);
+            for (var i2 in elems) {
+                var e = elems[i2];
+                if (e.style !== undefined) {
+                    e.style.backgroundColor = '#ff0000';
+                }
+            }
         }
     }
 
-    var holidays = document.getElementsByClassName("holiday");
-    var holidayArr = Array.prototype.slice.call(holidays);
-    var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
-    WriteHolidaysToTable(holidaysTxts);
-
-    slotList.forEach(function (slot) {
-        //slot.print();
-        slot.WriteToTable();
-    });
-
-
-
-    @*$(document).ready(function () {
+    $(document).ready(function () {
         //var dst = @Model.Schedule.StartOfDay;
         //var det = @Model.Schedule.EndOfDay;
         var timeSlots = document.getElementsByClassName("timeslot");
@@ -198,7 +339,7 @@
             .getElementById("personalHolidays")
             .textContent
             .split(',').map(function (a) { return parseInt(a); });
-
+        
         var timeSlotArr = Array.prototype.slice.call(timeSlots);
         var holidayArr = Array.prototype.slice.call(holidays);
         var contentsLst = timeSlotArr.map(function (a) { return a.textContent; });
@@ -214,6 +355,6 @@
         for (var i in contentsLst) {
             WriteTsToTable(contentsLst[i], cd, pholidays);
         }
-    });*@
+    });
 
 </script>

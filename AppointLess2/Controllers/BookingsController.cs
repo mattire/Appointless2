@@ -39,7 +39,7 @@ namespace AppointLess2.Controllers
                 var sched = db.Schedules.Find(schedID);
 
                 ViewModels.BookingWeekVM weekVM = new ViewModels.BookingWeekVM(sched, (DateTime)weekStart);
-                return View("WeekView2", weekVM);
+                return View("WeekView", weekVM);
             }
             return null;
         }

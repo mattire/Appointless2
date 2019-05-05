@@ -371,12 +371,12 @@
     <Content Include="Views\Bookings\CheckEmail.cshtml" />
     <Content Include="Views\Bookings\ClientManage.cshtml" />
     <Content Include="Views\Bookings\Message.cshtml" />
-    <Content Include="Views\Shared\WeekView.cshtml" />
+    <Content Include="Views\Shared\WeekView2.cshtml" />
     <Content Include="Views\Temp\Index.cshtml" />
     <Content Include="Views\Shared\WeekViewAdmin.cshtml" />
     <Content Include="Views\BookingsAdmin\Cancel.cshtml" />
     <Content Include="Views\Bookings\BookedError.cshtml" />
-    <Content Include="Views\Shared\WeekView2.cshtml" />
+    <Content Include="Views\Shared\WeekView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

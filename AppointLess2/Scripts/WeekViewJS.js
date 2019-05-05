@@ -59,7 +59,12 @@ function WriteHolidaysToTable(holidayNums) {
 // 
 // class TableSlot
 // 
-function TableSlot(startHour, startMins, lengthMins, days, bookings = null, mode = Mode.client, tsId = null) {
+function TableSlot(startHour, startMins, lengthMins, days,
+    bookings = null,
+    mode = Mode.client,
+    tsId = null,
+    currentDay = null)
+{
     this.mStartHour  = startHour;
     this.mStartMins  = startMins;
     this.mLengthMins = lengthMins;
@@ -68,6 +73,7 @@ function TableSlot(startHour, startMins, lengthMins, days, bookings = null, mode
     this.mBookings   = bookings;
     this.mMode = mode;
     this.mTimeSlotId = tsId;
+    this.mCurrentDay = currentDay;
 }
 
 TableSlot.prototype.print = function () {
@@ -130,11 +136,16 @@ TableSlot.prototype.WriteToTable = function () {
     elemBlocks.map(function (deb) {
         if ($.inArray(deb.day, bookedDays) == -1) // true if not in booked days
         {
-            self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
-            //self.SetEventHandler(deb.elemBlock, function () { alert('afaf'); });
-            self.SetEventHandler('click', deb.elemBlock, function () {
-                self.UnreservedClickHandler(deb.elemBlock, event);
-            });
+            console.log("*************");
+            console.log(currentDay);
+            if (currentDay == null || currentDay < deb.day) {
+                //if (deb.day > this.currentDay)
+                self.DrawTdElemBlock(deb.elemBlock, '2px solid #000000', '#77ccff');
+                //self.SetEventHandler(deb.elemBlock, function () { alert('afaf'); });
+                self.SetEventHandler('click', deb.elemBlock, function () {
+                    self.UnreservedClickHandler(deb.elemBlock, event);
+                });
+            }
         } else {
             if (self.mMode == Mode.admin) {
                 try {

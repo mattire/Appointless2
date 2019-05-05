@@ -28,7 +28,8 @@
                 </td>*@
             <td>
                 @*@Html.ActionLink(item.Item2 + " -   Näytä", "WeekView", "Bookings", new { schedule = item.Item1 }, null)*@
-                @Html.ActionLink(item.Item2 + " -   Näytä", "WeekView", "Bookings", new { schedule = item.Item1 }, null)
+                @*@Html.ActionLink(item.Item2 + " -   Näytä", "WeekView", "Bookings", new { schedule = item.Item1 }, null)*@
+                @Html.ActionLink(item.Item2 + " -   Näytä", "Index", "Bookings", new { schedID = item.Item1 }, null)
             </td>
         </tr>
     }
