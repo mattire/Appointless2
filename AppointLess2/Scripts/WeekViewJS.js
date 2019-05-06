@@ -263,6 +263,10 @@ function HideInput(hashInp) {
     $(hashInp).hide();
 }
 
+function DisableBtn(elemId) {
+    //console.log(elemId);
+    $('#' + elemId)[0].disabled = true;
+}
 
 var hideBtn = document.getElementById('hide_div');
 hideBtn.onclick = function () { $('#EventInput').hide(); }

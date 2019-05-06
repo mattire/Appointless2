@@ -133,8 +133,13 @@
         @Html.HiddenFor(m => m.Booking.EventDate)
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
 
-        <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
-               formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
+        <input type="submit" 
+               value="Varaa tämä aika" 
+               name="answer" style="font-size:medium; margin-bottom:10px"
+               id="createBookingBtn"
+               formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" 
+               onclick="DisableBtn('createBookingBtn');"
+               /><br />
         <input type="button" id="hide_div" value="X" onclick="HideInput();" style="position:absolute; top: -10px; right: -10px" />
         @*<input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />*@
 

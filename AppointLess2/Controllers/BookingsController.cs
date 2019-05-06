@@ -96,8 +96,8 @@ namespace AppointLess2.Controllers
             vm.TimeSlot = timeSlot;
             vm.TimeSlotId = timeSlot.Id;
             
-            vm.Number1 = rnd.Next(15);
-            vm.Number2 = rnd.Next(15);
+            vm.Number1 = rnd.Next(9);
+            vm.Number2 = rnd.Next(9);
             //vm.EventTime = timeSlot.TimeOfDay
             return View("Book", vm);
         }
