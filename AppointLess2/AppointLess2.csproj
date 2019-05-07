@@ -305,6 +305,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\TimeSlotGraph.js" />
+    <Content Include="Scripts\Utils.js" />
     <Content Include="Scripts\WeekViewJS.js" />
     <Content Include="Scripts\WeekViewOldJS.js" />
     <Content Include="Views\Schedules\TimeSlotInput.cshtml" />

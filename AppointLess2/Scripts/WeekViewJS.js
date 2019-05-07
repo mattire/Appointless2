@@ -259,14 +259,14 @@ TableSlot.prototype.ShowOnClickPos = function (uiElem, ev, offset = null) {
     $(uiElem).css({ top: ev.clientY + 30 + offset[0], left: ev.clientX - eiWidth / 2 + offset[1], position: 'absolute' });
 }
 
-function HideInput(hashInp) {
-    $(hashInp).hide();
-}
+//function HideInput(hashInp) {
+//    $(hashInp).hide();
+//}
 
-function DisableBtn(elemId) {
-    //console.log(elemId);
-    $('#' + elemId)[0].disabled = true;
-}
+//function DisableBtn(elemId) {
+//    //console.log(elemId);
+//    $('#' + elemId)[0].disabled = true;
+//}
 
 var hideBtn = document.getElementById('hide_div');
 hideBtn.onclick = function () { $('#EventInput').hide(); }
