@@ -11,7 +11,7 @@ namespace AppointLess2.Utils
     {
         public static IQueryable<Schedule> GetUserSchedules(Entities db, IPrincipal User)
         {
-
+            //db.Schedules.Where(s => s.AspNetUser.Id== User.Identity.);
             return db.Schedules.Where(s => s.AspNetUser.Email == User.Identity.Name);
         }
 

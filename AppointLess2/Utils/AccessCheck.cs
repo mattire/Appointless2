@@ -12,7 +12,12 @@ namespace AppointLess2.Utils
     {
         public static bool IsEntityCreator(Schedule schedule, IPrincipal principal)
         {
-            return schedule.UserID == principal.Identity.GetUserId();
+            var Id = principal.Identity.GetUserId();
+
+            System.Diagnostics.Debug.WriteLine(Id);
+            System.Diagnostics.Debug.WriteLine(schedule.UserID);
+            return principal.Identity.Name == schedule.AspNetUser.Email;
+            //return schedule.UserID == principal.Identity.GetUserId();
         }
 
         public static bool IsEntityCreator(TimeSlot timeSlot, IPrincipal principal)
