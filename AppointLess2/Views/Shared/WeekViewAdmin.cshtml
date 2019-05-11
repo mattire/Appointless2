@@ -81,7 +81,7 @@
         @Html.HiddenFor(m => m.Booking.EventDate)
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
 
-        <input type="submit" value="Varaa tämä aika" name="answer" style="font-size:medium; margin-bottom:10px"
+        <input type="submit" value="Merkitse varatuksi" name="answer" style="font-size:medium; margin-bottom:10px"
                formaction=@Url.Action("CreateBooking1") formmethod="post" class="btn btn-primary" /><br />
         <input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />
 
@@ -94,6 +94,7 @@
     {
 
         <h1>Varattu aika</h1>
+        <label id="AdminBookingDataName" style="padding-right:10px;margin:10px;"></label><br />
         <label id="AdminBookingDataEmail" style="padding-right:10px;margin:10px;"></label><br />
         <label id="AdminBookingDataPhone" style="padding-right:10px;margin:10px;"></label><br />
         <label id="AdminBookingDataDescription" style="padding-right:10px;margin:10px;"></label><br />
@@ -107,10 +108,10 @@
         <input type="submit" value="Peruuta" name="answer1" style="font-size:medium; margin-bottom:10px"
                formaction=@Url.Action("Cancel") formmethod="post" class="btn btn-primary" /><br />
         @*<input type="submit" value="Vahvista" name="answer2" style="font-size:medium; margin-bottom:10px"
-               formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />*@
+            formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />*@
         <input type="button" value="X" onclick="HideInput('#AdminBookingView');" style="position:absolute; top: -10px; right: -10px" />
     }
-    </div>
+</div>
 
 <div id="AdminHoverBookingView" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
     @*<h2>Aika</h2>*@

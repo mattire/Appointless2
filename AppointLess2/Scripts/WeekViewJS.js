@@ -211,13 +211,17 @@ TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
 }
 
 TableSlot.prototype.AdminClickHandler = function (booking, ev) {
+    //console.log('booking.Phone');
+    //console.log(booking.Phone);
     console.log(this.mLengthMins);
     console.log(booking.Name);
     console.log(booking.Email);
     console.log(booking.Description);
+    
 
-    $('#AdminBookingDataEmail').text(booking.Name)
-    $('#AdminBookingDataPhone').text(booking.Email)
+    $('#AdminBookingDataEName').text(booking.Name)
+    $('#AdminBookingDataEmail').text(booking.Email)
+    //$('#AdminBookingDataPhone').text(booking.)
     $('#AdminBookingDataDescription').text(
         booking.Description == null ? "" :
             booking.Description.length < 15 ?
