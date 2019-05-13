@@ -3,10 +3,10 @@ var Mode = Object.freeze({ "admin": 1, "client": 2 });
 
 function DaysToNums(days) {
     var nums = [
-        (days & 1) ? 1 : -1,
-        (days & 2) ? 2 : -1,
-        (days & 4) ? 3 : -1,
-        (days & 8) ? 4 : -1,
+        (days &  1) ? 1 : -1,
+        (days &  2) ? 2 : -1,
+        (days &  4) ? 3 : -1,
+        (days &  8) ? 4 : -1,
         (days & 16) ? 5 : -1,
         (days & 32) ? 6 : -1,
         (days & 64) ? 7 : -1,
@@ -211,17 +211,16 @@ TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
 }
 
 TableSlot.prototype.AdminClickHandler = function (booking, ev) {
-    //console.log('booking.Phone');
-    //console.log(booking.Phone);
+    console.log(booking.Phone);
     console.log(this.mLengthMins);
-    console.log(booking.Name);
-    console.log(booking.Email);
-    console.log(booking.Description);
-    
+    //console.log(booking.Name);
+    //console.log(booking.Email);
+    //console.log(booking.Description);
+    console.log(booking);
 
-    $('#AdminBookingDataEName').text(booking.Name)
+    $('#AdminBookingDataName').text(booking.Name)
     $('#AdminBookingDataEmail').text(booking.Email)
-    //$('#AdminBookingDataPhone').text(booking.)
+    $('#AdminBookingDataPhone').text(booking.Phone)
     $('#AdminBookingDataDescription').text(
         booking.Description == null ? "" :
             booking.Description.length < 15 ?

@@ -147,6 +147,7 @@
             foreach (var b in bkngs)
             {
                 @:var jsonBooking = JSON.parse("@b".replace(/&quot;/g, '"'));
+                @:console.log('jsonBooking');
                 @:console.log(jsonBooking);
                 @:bookings.push(jsonBooking);
             }

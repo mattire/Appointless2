@@ -220,6 +220,7 @@ namespace AppointLess2.ViewModels
             public int Day { get; set; }
             public string Name { get; set; }
             public string Email { get; set; }
+            public string Phone { get; set; }
             public string Description { get; set; }
             public int Status { get; set; }
         }
@@ -241,6 +242,7 @@ namespace AppointLess2.ViewModels
                     ID = b.Id,
                     Day   = (b.Time.DayOfWeek == DayOfWeek.Sunday) ? 7 : (int)b.Time.DayOfWeek,
                     Email = includeData == true ? b.Email : "",
+                    Phone = includeData == true ? b.Phone : "",
                     Name  = includeData == true ? b.Name  : "",
                     Description = includeData == true ? b.Descrption : "",
                     Status = b.Status,
