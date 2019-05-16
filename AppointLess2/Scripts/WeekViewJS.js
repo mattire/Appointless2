@@ -188,18 +188,17 @@ TableSlot.prototype.WriteToTable = function () {
 }
 
 TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
-    console.log(ev.srcElement.id);
     var weekdayNum = ev.srcElement.id[2]
     var mon_n_day = ToMonthAndDay(weekdayNum);
-    console.log(mon_n_day);
     $('#EventInput').show();
-    console.log(elemBllock);
+    //console.log(elemBllock);
     $('#dateAndTime').text(
         mon_n_day[0] + " " +
         this.mStartHour + ":" + this.mStartMins + "\n" +
         this.mLengthMins + "minuuttia");
 
-    //this.m
+    console.log('this.mTimeSlotId');
+    console.log(this.mTimeSlotId);
     $('#Booking_TimeSlotId').val(this.mTimeSlotId);
     $('#Booking_EventDate').val(mon_n_day[1]);
     
@@ -257,9 +256,14 @@ TableSlot.prototype.ShowOnClickPos = function (uiElem, ev, offset = null) {
     eiWidth = eiWidth > 400 ? 300 : eiWidth;
     //this.mLengthMins
     if (offset == null) {
+
         offset = [0, 0];
     }
-    $(uiElem).css({ top: ev.clientY + 30 + offset[0], left: ev.clientX - eiWidth / 2 + offset[1], position: 'absolute' });
+    $(uiElem).css({
+        top: ev.clientY + 30 + offset[0],
+        left: ev.clientX - eiWidth / 2 + offset[1],
+        position: 'absolute'
+    });
 }
 
 

@@ -378,6 +378,7 @@
     <Content Include="Views\BookingsAdmin\Cancel.cshtml" />
     <Content Include="Views\Bookings\BookedError.cshtml" />
     <Content Include="Views\Shared\WeekView.cshtml" />
+    <Content Include="Views\BookingsAdmin\Reserve.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

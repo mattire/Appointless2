@@ -65,6 +65,45 @@ namespace AppointLess2.Controllers
 
         [Authorize]
         [HttpPost]
+        public ActionResult ReserveBooking()
+            {
+            var eventDate = Request.Form["Booking.EventDate"];
+            var timeSlotId = Request.Form["Booking.TimeSlotId"];
+            var timeSlot = db.TimeSlots.Find(int.Parse(timeSlotId));
+
+            BookingVM vm = new BookingVM();
+            vm.EventDate = eventDate;
+            vm.TimeSlot = timeSlot;
+            vm.TimeSlotId = timeSlot.Id;
+
+            return View("Reserve", vm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //public ActionResult Create(BookingWeekVM model)
+        public ActionResult Create([Bind(Include = "Email, BookerName, PhoneNumber")] BookingVM model)
+        {
+            int timeSlotId = -1;
+            string eventDate = null;
+            string description = null;
+
+            timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
+            eventDate = Request.Form["EventDate"];
+            description = Request.Form["Description"];
+
+            bool availabilitySuccess = false;
+            if (ModelState.IsValid)
+            {
+
+            }
+            return null;
+        }
+
+
+        [Authorize]
+        [HttpPost]
         public ActionResult CancelConfirmed()
         {
             int bid = int.Parse(Request.Form["bookingID"]);
