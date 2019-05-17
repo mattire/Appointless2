@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -96,9 +97,54 @@ namespace AppointLess2.Controllers
             bool availabilitySuccess = false;
             if (ModelState.IsValid)
             {
+                using (TransactionScope tc = new TransactionScope(TransactionScopeOption.Required))
+                {
+                    DateTime eventDT = Utils.Utils.FromString(eventDate);
 
+                    var book = new Booking()
+                    {
+                        Email = model.Email,
+                        Name = model.BookerName,
+                        Phone = model.PhoneNumber,
+                        Time = eventDT,
+                        TimeSlotID = timeSlotId,
+                        UUID = Guid.NewGuid(),
+                        Status = 0,
+                        Descrption = description
+                    };
+                    //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
+
+                    // check if is still free
+                    if (!Utils.BookingManager.CheckIfBookingForSlotIsStillAwailable(book, db))
+                    {
+                        availabilitySuccess = false;
+                    }
+                    else
+                    {
+                        availabilitySuccess = true;
+                        db.Bookings.Add(book);
+                        db.SaveChanges();
+                        //Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID); // throws if fails
+                        //ViewBag.Email = model.Email;
+                    }
+
+                    tc.Complete();
+                }
+                if (availabilitySuccess)
+                {
+                    return View("Reserved");
+                }
+                else
+                {
+                    return View("ReservedError", model);
+                }
             }
-            return null;
+            //var errors = ModelState.Values.SelectMany(v => v.Errors);
+            //errors.First().
+            model.TimeSlot = db.TimeSlots.Find(timeSlotId);
+            model.EventDate = eventDate;
+
+            return View("Reserve", model);
         }
 
 

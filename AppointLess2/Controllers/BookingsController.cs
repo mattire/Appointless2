@@ -129,8 +129,6 @@ namespace AppointLess2.Controllers
             if (ModelState.IsValid)
             {
                 lock (bookingCreationLock) {
-
-
                     using (TransactionScope tc = new TransactionScope(TransactionScopeOption.Required))
                     {
                         DateTime eventDT = Utils.Utils.FromString(eventDate);
