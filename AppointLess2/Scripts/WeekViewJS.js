@@ -187,7 +187,13 @@ TableSlot.prototype.WriteToTable = function () {
     });
 }
 
-TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
+TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev)
+{
+    //console.log('pageXY');
+    //console.log(ev.pageX + ' ' + ev.pageY);
+    //console.log(ev.layerX + ' ' + ev.layerY);
+    //console.log(ev.clientX + ' ' + ev.clientY);
+
     var weekdayNum = ev.srcElement.id[2]
     var mon_n_day = ToMonthAndDay(weekdayNum);
     $('#EventInput').show();
@@ -206,7 +212,8 @@ TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev) {
     var eiWidth = $('#EventInput').width();
     eiWidth = eiWidth > 400 ? 300 : eiWidth;
     //this.mLengthMins
-    $("#EventInput").css({ top: ev.clientY + 30, left: ev.clientX - eiWidth / 2, position: 'absolute' });
+    //$("#EventInput").css({ top: ev.clientY + 30, left: ev.clientX - eiWidth / 2, position: 'absolute' });
+    $("#EventInput").css({ top: ev.pageY + 30, left: ev.pageX - eiWidth / 2, position: 'absolute' });
 }
 
 TableSlot.prototype.AdminClickHandler = function (booking, ev) {
