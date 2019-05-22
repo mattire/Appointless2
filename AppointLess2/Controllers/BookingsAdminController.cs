@@ -109,7 +109,7 @@ namespace AppointLess2.Controllers
                         Time = eventDT,
                         TimeSlotID = timeSlotId,
                         UUID = Guid.NewGuid(),
-                        Status = 0,
+                        Status = 1,
                         Descrption = description
                     };
                     //db.Schedules.First().TimeSlots.SelectMany(ts=>ts.Bookings.Where(b=>b.))
@@ -132,7 +132,7 @@ namespace AppointLess2.Controllers
                 }
                 if (availabilitySuccess)
                 {
-                    return View("Reserved");
+                    return View("Reserved", model);
                 }
                 else
                 {

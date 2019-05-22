@@ -1,0 +1,26 @@
+﻿@model AppointLess2.ViewModels.BookingVM
+
+<h2>Varattu</h2>
+
+@{
+    ViewBag.Title = "Reserved";
+}
+
+<h3>@Model.Email</h3>
+<h3>@Model.BookerName</h3>
+<h3>@Model.PhoneNumber</h3>
+<h3>@Model.Description</h3>
+<h3>@Model.CheckField</h3>
+<h3>@Model.EventDate</h3>
+
+@*PartialViewResult()*@
+
+Html.RenderPartial()
+
+
+@*
+        @Html.Partial()
+    @Html.RenderPartial()
+
+*@
+

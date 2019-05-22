@@ -380,6 +380,7 @@
     <Content Include="Views\Shared\WeekView.cshtml" />
     <Content Include="Views\BookingsAdmin\Reserve.cshtml" />
     <Content Include="Views\BookingsAdmin\ReservedError.cshtml" />
+    <Content Include="Views\BookingsAdmin\Reserved.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
