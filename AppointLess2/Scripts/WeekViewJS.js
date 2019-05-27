@@ -207,6 +207,7 @@ TableSlot.prototype.UnreservedClickHandler = function (elemBllock, ev)
     console.log(this.mTimeSlotId);
     $('#Booking_TimeSlotId').val(this.mTimeSlotId);
     $('#Booking_EventDate').val(mon_n_day[1]);
+
     
     //var firstElem = elemBllock[0];
     var eiWidth = $('#EventInput').width();

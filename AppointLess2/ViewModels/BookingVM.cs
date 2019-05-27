@@ -55,6 +55,8 @@ namespace AppointLess2.ViewModels
         public TimeSlot TimeSlot { get; set; }
         public int Number1 { get; set; }
         public int Number2 { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 
     /// <summary>

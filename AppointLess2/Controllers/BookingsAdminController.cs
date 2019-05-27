@@ -67,16 +67,17 @@ namespace AppointLess2.Controllers
         [Authorize]
         [HttpPost]
         public ActionResult ReserveBooking()
-            {
+        {
             var eventDate = Request.Form["Booking.EventDate"];
             var timeSlotId = Request.Form["Booking.TimeSlotId"];
             var timeSlot = db.TimeSlots.Find(int.Parse(timeSlotId));
+            string returnUrl = Request.Form["return_url"];
 
             BookingVM vm = new BookingVM();
             vm.EventDate = eventDate;
             vm.TimeSlot = timeSlot;
             vm.TimeSlotId = timeSlot.Id;
-
+            vm.ReturnUrl = returnUrl;
             return View("Reserve", vm);
         }
 
@@ -93,6 +94,7 @@ namespace AppointLess2.Controllers
             timeSlotId = int.Parse(Request.Form["TimeSlotId"]);
             eventDate = Request.Form["EventDate"];
             description = Request.Form["Description"];
+            string returnUrl = Request.Form["return_url"];
 
             bool availabilitySuccess = false;
             if (ModelState.IsValid)
@@ -132,6 +134,7 @@ namespace AppointLess2.Controllers
                 }
                 if (availabilitySuccess)
                 {
+                    model.ReturnUrl = returnUrl;
                     return View("Reserved", model);
                 }
                 else

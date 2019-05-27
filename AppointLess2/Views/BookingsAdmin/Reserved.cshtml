@@ -12,10 +12,13 @@
 <h3>@Model.Description</h3>
 <h3>@Model.CheckField</h3>
 <h3>@Model.EventDate</h3>
+<h3>@Model.ReturnUrl</h3>
 
 @*PartialViewResult()*@
 
-Html.RenderPartial()
+@*Html.RenderPartial()*@
+
+<a href="@Model.ReturnUrl">Paluu</a>
 
 
 @*

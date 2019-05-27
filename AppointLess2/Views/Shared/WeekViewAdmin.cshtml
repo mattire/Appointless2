@@ -82,6 +82,8 @@
         @Html.HiddenFor(m => m.Booking.EventDate)
         @Html.HiddenFor(m => m.Booking.TimeSlotId);
 
+        <input id="return_url" name="return_url" type="hidden" value="">
+
         <input type="submit" value="Merkitse varatuksi" name="answer" style="font-size:medium; margin-bottom:10px"
                formaction=@Url.Action("ReserveBooking") formmethod="post" class="btn btn-primary" /><br />
         <input type="button" value="X" onclick="HideInput('#EventInput');" style="position:absolute; top: -10px; right: -10px" />
@@ -103,6 +105,8 @@
 
         <input type="hidden" id="bookingID" name="bookingID" value="">
 
+        <input id="return_url" name="return_url" type="hidden" value="">
+
         @*<input id="adminEmail"       type="text" style="padding-right:10px;margin:10px;" />      <br />
             <input id="adminPhone"       type="text" style="padding-right:10px;margin:10px;" />      <br />
             <input id="adminDescription" type="text" style="padding-right:10px;margin:10px;" /><br />*@
@@ -111,7 +115,7 @@
         @*<input type="submit" value="Vahvista" name="answer2" style="font-size:medium; margin-bottom:10px"
             formaction=@Url.Action("Temp") formmethod="post" class="btn btn-primary" /><br />*@
         <input type="button" value="X" onclick="HideInput('#AdminBookingView');" style="position:absolute; top: -10px; right: -10px" />
-    }
+    }\
 </div>
 
 <div id="AdminHoverBookingView" style="display:none; background-color:#EEEEEE; border:1px solid green; z-index:3; margin: auto; text-align:center">
@@ -121,7 +125,7 @@
 
 <script>
     var currentDay = null;
-
+    document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
 </script>
 
 <script src="~/Scripts/jquery-3.3.1.js"></script>
