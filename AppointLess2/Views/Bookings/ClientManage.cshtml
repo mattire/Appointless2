@@ -19,6 +19,12 @@
         {
             <h2>Vahvistamaton ajanvaraus</h2>
 
+            <h4>@Model.Time.ToString("dd.M.yyyy")</h4>
+            @*<h4>@Model.TimeSlot.TimeOfDay.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</h4>*@
+            <h4>@string.Format("{0}:{1}", Model.TimeSlot.TimeOfDay.Hours, Model.TimeSlot.TimeOfDay.Minutes.ToString("00"))</h4>
+            <h4>Kesto: @Model.TimeSlot.LengthMinutes minuuttia</h4>
+
+
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     @*<input type="submit" value="Create" class="btn btn-default" />*@

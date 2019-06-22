@@ -1,4 +1,4 @@
 ﻿
 
-Voit vahvistaa tapaamisen tiedot tässä osoitteessa: 
+Kopioi alla oleva linkki selaimen osoite riville ja paina enter päästäksesi vahvistamaan ajanvarauksesi: 
   {0}/Bookings/ClientManage?strGuid={1}

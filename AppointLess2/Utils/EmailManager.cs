@@ -31,7 +31,11 @@ namespace AppointLess2.Utils
 
                 var host = ConfigurationManager.AppSettings["HostAddressName"];
 
-                mail.Subject = "this is a test email.";
+                // cut out http:// or https:// to fool gmail warnings
+                if ((host.StartsWith("http://"))) { host = host.Substring(7); }
+                if ((host.StartsWith("https://"))) { host = host.Substring(8); }
+
+                mail.Subject = "TBooking ajanvarauksen vahvistaminen";
                 //mail.Body = string.Format("Clikkaa tätä linkkiä tapauksen vahvistamiseksi: http://localhost:3998/Confirmation/Confirm?strGuid={0}",guid);
                 mail.Body = string.Format(format, host, guid);
                 client.Send(mail);
