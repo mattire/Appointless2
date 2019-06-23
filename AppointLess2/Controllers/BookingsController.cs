@@ -90,6 +90,7 @@ namespace AppointLess2.Controllers
             var eventDate = Request.Form["Booking.EventDate"];
             var timeSlotId = Request.Form["Booking.TimeSlotId"];
             var timeSlot = db.TimeSlots.Find(int.Parse(timeSlotId));
+            string returnUrl = Request.Form["return_url"];
 
             BookingVM vm = new BookingVM();
             vm.EventDate = eventDate;
@@ -98,6 +99,7 @@ namespace AppointLess2.Controllers
             
             vm.Number1 = rnd.Next(9);
             vm.Number2 = rnd.Next(9);
+            vm.ReturnUrl = returnUrl;
             //vm.EventTime = timeSlot.TimeOfDay
             return View("Book", vm);
         }
@@ -115,6 +117,7 @@ namespace AppointLess2.Controllers
             int checkRes = int.Parse(Request.Form["CheckField"]);
             int num1 = int.Parse(Request.Form["Number1"]);
             int num2 = int.Parse(Request.Form["Number2"]);
+            string returnUrl = Request.Form["return_url"];
 
             if (checkRes!= (num1 + num2))
             {
@@ -158,6 +161,7 @@ namespace AppointLess2.Controllers
                             db.SaveChanges();
                             Utils.EmailManager.SendConfirmationMail(book.Email, book.UUID); // throws if fails
                             ViewBag.Email = model.Email;
+                            ViewBag.ReturnUrl = returnUrl;
                         }
 
                         tc.Complete();

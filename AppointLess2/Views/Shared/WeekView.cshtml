@@ -159,7 +159,11 @@
 <script src="~/Scripts/WeekViewJS.js"></script>
 <script src="~/Scripts/Utils.js"></script>
 
+
+
+
 <script>
+    document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
 
     var currentDay = parseInt(document.getElementById("currentDay").textContent);
 
