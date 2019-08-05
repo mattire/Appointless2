@@ -125,7 +125,9 @@
 
 <script>
     var currentDay = null;
-    document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
+    //document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
+    var retUrls = document.getElementsByName('return_url');
+    for (i = 0; i < retUrls.length; i++) { retUrls[i].value = document.URL; }
 </script>
 
 <script src="~/Scripts/jquery-3.3.1.js"></script>

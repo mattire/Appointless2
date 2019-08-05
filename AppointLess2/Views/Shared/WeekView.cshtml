@@ -163,23 +163,28 @@
 
 
 <script>
-    document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
+    
+    try {
+        //document.getElementsByName('return_url').forEach(function (e) { e.value = document.URL; })
+        var retUrls = document.getElementsByName('return_url');
+        for (i = 0; i < retUrls.length; i++) { retUrls[i].value = document.URL; }
 
-    var currentDay = parseInt(document.getElementById("currentDay").textContent);
 
-    $('.createbooking').on('submit', function () {
-        var self = $(this),
-            button = self.find('input[type="submit"], button');
-        console.log('submitting?');
-        button.attr('disabled', 'disabled').val('odota..');
-    });
+        var currentDay = parseInt(document.getElementById("currentDay").textContent);
 
-    var pholidays = document
-        .getElementById("personalHolidays")
-        .textContent
-        .split(',').map(function (a) { return parseInt(a); });
-    //console.log('~~~~~~~~~~~~~~~~~~~~');
-    //console.log(pholidays);
+        $('.createbooking').on('submit', function () {
+            var self = $(this),
+                button = self.find('input[type="submit"], button');
+            console.log('submitting?');
+            button.attr('disabled', 'disabled').val('odota..');
+        });
+
+        var pholidays = document
+            .getElementById("personalHolidays")
+            .textContent
+            .split(',').map(function (a) { return parseInt(a); });
+        //console.log('~~~~~~~~~~~~~~~~~~~~');
+        //console.log(pholidays);
 
     @{
         foreach (var ts in Model.Schedule.TimeSlots)
@@ -214,18 +219,25 @@
         }
     }
 
-    var holidays = document.getElementsByClassName("holiday");
-    var holidayArr = Array.prototype.slice.call(holidays);
-    var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
-    WriteHolidaysToTable(holidaysTxts);
+        var holidays = document.getElementsByClassName("holiday");
+        var holidayArr = Array.prototype.slice.call(holidays);
+        var holidaysTxts = holidayArr.map(function (a) { return a.textContent; });
+        WriteHolidaysToTable(holidaysTxts);
 
-    slotList.forEach(function (slot) {
-        //slot.print();
-        slot.WriteToTable();
-    });
 
-    var hideBtn = document.getElementById('hide_div');
-    hideBtn.onclick = function () { $('#EventInput').hide(); }
 
+        slotList.forEach(function (slot) {
+            //slot.print();
+            console.log("here!!!!");
+            slot.WriteToTable();
+        });
+
+        var hideBtn = document.getElementById('hide_div');
+        hideBtn.onclick = function () { $('#EventInput').hide(); }
+
+    } catch (e) {
+        console.log("Error:");
+        console.log(e);
+    }
 
 </script>
