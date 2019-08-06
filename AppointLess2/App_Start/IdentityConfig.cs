@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Net.Mail;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -11,6 +12,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using AppointLess2.Models;
+using System.Configuration;
 
 namespace AppointLess2
 {
@@ -28,7 +30,12 @@ namespace AppointLess2
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
+            SmtpClient client = new SmtpClient();
+            return client.SendMailAsync(ConfigurationManager.AppSettings["SupportEmailAddr"],
+                                                message.Destination,
+                                                message.Subject,
+                                                message.Body);
+            //return Task.FromResult(0);
         }
     }
 
