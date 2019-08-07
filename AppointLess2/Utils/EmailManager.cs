@@ -14,6 +14,7 @@ namespace AppointLess2.Utils
     {
         //private static string Sender = "lahdeviitekonsultti@gmail.com";
         private static string Sender = ConfigurationManager.AppSettings["SupportEmailAddr"];
+        private static string SenderPswd = ConfigurationManager.AppSettings["SupportEmailAddrPswd"];
 
         public static void SendConfirmationMail(string address, Guid guid)
         {
@@ -24,13 +25,9 @@ namespace AppointLess2.Utils
 
                 //MailMessage mail = new MailMessage("alr2d4@hotmail.com", address);
                 MailMessage mail = new MailMessage(Sender, address);
-                
-                 //SmtpClient client = new SmtpClient()
-                var client = new SmtpClient("smtp.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential(Sender, "2wAZXSq122"),
-                    EnableSsl = true,
-                };
+
+                //SmtpClient client = new SmtpClient()
+                var client = GetClient();
 
                 var host = ConfigurationManager.AppSettings["HostAddressName"];
                 
@@ -71,7 +68,7 @@ namespace AppointLess2.Utils
         {
             return new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential(Sender, "2wAZXSq122"),
+                Credentials = new NetworkCredential(Sender, SenderPswd),
                 EnableSsl = true,
             };
         }
