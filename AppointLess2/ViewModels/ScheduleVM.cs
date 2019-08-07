@@ -114,13 +114,13 @@ namespace AppointLess2.ViewModels.ScheduleViewModels
             //this.DaysOfWeek     = ts.DaysOfWeek    ;
         }
 
-        internal TimeSlot ToTS(HttpRequestBase req, Entities db = null)
+        internal TimeSlot ToTS(HttpRequestBase req, Entities db = null, int? schedID = null)
         {
             var ts = new TimeSlot() {
-                Id              = Id,
-                TimeOfDay       = TimeOfDay,
-                LengthMinutes   = LengthMinutes,
-                ScheduleID      = ScheduleID,
+                Id = Id,
+                TimeOfDay = TimeOfDay,
+                LengthMinutes = LengthMinutes,
+                ScheduleID = schedID == null ? ScheduleID : (int)schedID,
             };
 
             //var str = string.Join("", this.DaysOfWeek.Select(d => d.Selected ? "1" : "0"));

@@ -125,7 +125,11 @@
     function WriteToCanvas(hour, mins, days, color) {
         var canvas = document.getElementById("schedMiniMap");
         var ctx = canvas.getContext("2d");
+        if (window.navigator.userAgent.indexOf('Edge') != -1) {
+            color = "#" + "#FF000088".substr(3);
+        }
         ctx.fillStyle = color;
+        //ctx.fillStyle = "#F008";
         //ctx.fillRect(0,0,150,75);
         i = 0;
         console.log('ctx');
@@ -272,11 +276,7 @@
         roundInputs(h, m, mins);
 
         var y = Math.round((h + m / 60) * 10);
-        console.log('AAAAAAAAAAAAAAAAAAAAAA');
-        console.log(h);
-        console.log(y);
-        console.log(mins);
-        console.log(days);
+
         //WriteToCanvas(y, mins, days, "#00FF0088");
         WriteToCanvas(y, mins, days, "#FF000088");
         

@@ -119,7 +119,7 @@ namespace AppointLess2.Controllers
             if (ModelState.IsValid)
             {
                 var schedID = int.Parse(Request.Form["ScheduleID"]);
-                TimeSlot ts = timeSlotVM.ToTS(Request, db);
+                TimeSlot ts = timeSlotVM.ToTS(Request, db, schedID);
 
                 // Check that user is the owner of specified schedule:
                 ActionResult excep = Utils.AccessCheck.CheckEntity(ts, User);
